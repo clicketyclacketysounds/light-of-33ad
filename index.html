@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Is the Light of 33 AD?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --bg-void:#030509;
+  --bg-halo:#0c1424;
+  --ring:#dff1ff;
+  --ink:#c9d6e8;
+  --dim:#5f6e86;
+  --gold:#ffd27d;
+  --uncertain:#9aa7ff;
+  --mono:'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --serif:'Spectral', Georgia, 'Times New Roman', serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#000;overflow:hidden}
+body{font-family:var(--mono);color:var(--ink)}
+
+#stage{
+  position:absolute;
+  width:min(100vw, calc(100vh * 16 / 9));
+  height:min(100vh, calc(100vw * 9 / 16));
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  background:var(--bg-void);
+  overflow:hidden;
+}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* ---------- HUD ---------- */
+#hud{
+  position:absolute;top:22px;left:24px;z-index:5;
+  display:flex;flex-direction:column;gap:13px;
+  pointer-events:none;
+}
+.hud-block .hud-label{
+  font-size:9.5px;letter-spacing:.22em;color:var(--dim);
+  text-transform:uppercase;margin-bottom:3px;
+}
+.hud-block .hud-value{
+  font-size:17px;font-weight:500;color:var(--ink);
+  font-variant-numeric:tabular-nums;letter-spacing:.02em;
+}
+.hud-block .hud-sub{
+  font-size:9px;letter-spacing:.14em;color:var(--dim);margin-top:2px;
+}
+#hud-flux .hud-value{color:var(--gold)}
+
+/* ---------- small title, top right ---------- */
+#minititle{
+  position:absolute;top:24px;right:26px;z-index:5;text-align:right;
+  pointer-events:none;opacity:0;transition:opacity 1.2s ease;
+}
+#minititle .t1{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink);opacity:.85}
+#minititle .t2{font-size:8.5px;letter-spacing:.24em;color:var(--dim);margin-top:3px}
+#minititle.show{opacity:1}
+
+/* ---------- intro title ---------- */
+#intro{
+  position:absolute;inset:0;z-index:8;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;pointer-events:none;
+  transition:opacity 1.1s ease;
+}
+#intro h1{
+  font-family:var(--serif);font-weight:500;font-style:italic;
+  font-size:clamp(28px,4.6vw,52px);color:#e9f2ff;letter-spacing:.01em;
+}
+#intro .sub{
+  margin-top:14px;font-size:clamp(9px,1vw,11.5px);
+  letter-spacing:.3em;color:var(--dim);text-transform:uppercase;
+}
+#intro.gone{opacity:0}
+
+/* ---------- caption banner ---------- */
+#caption{
+  position:absolute;left:50%;bottom:96px;transform:translateX(-50%);
+  z-index:6;max-width:min(680px, 78%);text-align:center;
+  font-size:13px;line-height:1.55;letter-spacing:.03em;color:var(--ink);
+  opacity:0;transition:opacity .5s ease;pointer-events:none;
+  text-shadow:0 2px 18px rgba(3,5,9,.9);
+}
+#caption.show{opacity:1}
+#caption .cap-key{color:var(--gold)}
+
+/* ---------- legend note ---------- */
+#note{
+  position:absolute;left:24px;bottom:58px;z-index:5;
+  font-size:8.5px;letter-spacing:.1em;color:var(--dim);opacity:.75;
+  pointer-events:none;transition:opacity .6s ease;max-width:340px;line-height:1.7;
+}
+
+/* ---------- controls ---------- */
+#controls{
+  position:absolute;left:0;right:0;bottom:0;z-index:7;
+  display:flex;align-items:center;gap:14px;
+  padding:12px 20px 14px;
+  background:linear-gradient(to top, rgba(3,5,9,.88), rgba(3,5,9,0));
+  transition:opacity .6s ease;
+}
+.ui-hidden #controls, .ui-hidden #note{opacity:0}
+.btn{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  color:var(--ink);background:transparent;
+  border:1px solid rgba(140,165,200,.35);border-radius:3px;
+  padding:7px 13px;cursor:pointer;text-transform:uppercase;
+  transition:border-color .2s, color .2s, background .2s;
+  white-space:nowrap;
+}
+.btn:hover{border-color:rgba(200,220,255,.7);color:#fff}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn.on{border-color:var(--gold);color:var(--gold)}
+#scrubwrap{position:relative;flex:1;height:26px;display:flex;align-items:center}
+#scrub{
+  -webkit-appearance:none;appearance:none;width:100%;height:3px;
+  background:rgba(120,145,180,.28);border-radius:2px;outline:none;cursor:pointer;
+}
+#scrub::-webkit-slider-thumb{
+  -webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--ring);border:1px solid rgba(3,5,9,.6);
+  box-shadow:0 0 10px rgba(180,220,255,.7);cursor:pointer;
+}
+#scrub::-moz-range-thumb{
+  width:13px;height:13px;border-radius:50%;background:var(--ring);
+  border:1px solid rgba(3,5,9,.6);box-shadow:0 0 10px rgba(180,220,255,.7);cursor:pointer;
+}
+#scrub:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+#ticks{position:absolute;left:0;right:0;top:50%;height:0;pointer-events:none}
+.tick{
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:rgba(190,215,250,.55);transform:translate(-50%,-50%);
+}
+.tick.thr{background:var(--gold);width:4px;height:4px}
+
+/* ---------- end card ---------- */
+#endcard{
+  position:absolute;inset:0;z-index:9;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;background:rgba(3,5,9,.62);
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  opacity:0;pointer-events:none;transition:opacity 1.4s ease;
+  padding:24px;
+}
+#endcard.show{opacity:1;pointer-events:auto}
+#endcard .eyebrow{font-size:10px;letter-spacing:.34em;color:var(--dim);text-transform:uppercase}
+#endcard h2{
+  font-family:var(--serif);font-weight:500;font-size:clamp(30px,4.4vw,50px);
+  color:#eef5ff;margin:16px 0 6px;letter-spacing:.01em;
+}
+#endcard .radius{font-size:12px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:26px}
+#endcard .line{font-size:12.5px;line-height:1.9;color:var(--ink);max-width:560px;letter-spacing:.03em}
+#endcard .verdict{
+  font-family:var(--serif);font-style:italic;font-size:clamp(17px,2vw,22px);
+  color:var(--gold);margin-top:26px;max-width:620px;line-height:1.5;
+}
+#endcard .btn{margin-top:34px}
+
+@media (max-width:760px){
+  #hud .hud-value{font-size:13px}
+  #note{display:none}
+  #caption{font-size:11px;bottom:88px}
+}
+</style>
+</head>
+<body>
+<div id="stage" tabindex="0">
+  <canvas id="cv"></canvas>
+
+  <div id="hud" aria-hidden="true">
+    <div class="hud-block">
+      <div class="hud-label">Year on Earth</div>
+      <div class="hud-value" id="hud-year">33 AD</div>
+    </div>
+    <div class="hud-block">
+      <div class="hud-label">Wavefront radius</div>
+      <div class="hud-value" id="hud-dist">0.2 light-seconds</div>
+    </div>
+    <div class="hud-block" id="hud-flux">
+      <div class="hud-label">Photon flux at wavefront</div>
+      <div class="hud-value" id="hud-flux-v">&nbsp;</div>
+      <div class="hud-sub">reflected photons / m&#178; / day</div>
+    </div>
+  </div>
+
+  <div id="minititle">
+    <div class="t1">Where is the light of 33 AD?</div>
+    <div class="t2">Earthshine, traced outward</div>
+  </div>
+
+  <div id="intro">
+    <h1>Where is the light of 33 AD?</h1>
+    <div class="sub">Sunlight reflected off Earth, traced outward for 1,993 years</div>
+  </div>
+
+  <div id="caption"></div>
+
+  <div id="note">
+    Radial distances follow a true logarithmic scale &#183; position angles are stylized
+    &#183; object sizes not to scale &#183; wavefront brightness follows the inverse square
+    law, log compressed for visibility
+  </div>
+
+  <div id="controls">
+    <button class="btn" id="playbtn" aria-label="Play or pause">Pause</button>
+    <button class="btn" id="restartbtn">Restart</button>
+    <div id="scrubwrap">
+      <input type="range" id="scrub" min="0" max="10000" value="0" step="1" aria-label="Timeline scrubber">
+      <div id="ticks"></div>
+    </div>
+    <button class="btn" id="geobtn" aria-pressed="false" title="Show the true day-side reflection lobe">True geometry</button>
+  </div>
+
+  <div id="endcard" role="dialog" aria-label="Summary">
+    <div class="eyebrow">Today &#183; 2026</div>
+    <h2>1,993 light-years</h2>
+    <div class="radius">radius of the 33 AD wavefront</div>
+    <div class="line">
+      Next landmark ahead: the Veil Nebula, about 2,400 light-years out. Arrival about 2433 AD.<br>
+      About 3 photons per square meter per day still carry proof of a living planet: its oceans,
+      its oxygen, its 24-hour spin. Nothing smaller survives.
+    </div>
+    <div class="verdict">Diluted beyond any recovery of events. But never destroyed.</div>
+    <button class="btn" id="replaybtn">Replay</button>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   CONSTANTS AND PHYSICS
+   All figures verified in the audited analysis. Distances in
+   light-seconds internally. 1 Julian year = 31,557,600 s.
+   ============================================================ */
+var LSY = 31557600;            // light-seconds per light-year
+var TOTAL_LY = 1993;           // shell radius today, ly
+var FLUX_TODAY = 2.8;          // photons / m^2 / day at 1,993 ly (audited)
+var K = 0.32;                  // log-compression exponent for the fixed-ring zoom
+var R_FRAC = 0.37;             // ring radius as fraction of stage height
+var R0 = 0.15;                 // starting radius, light-seconds
+
+/* ============================================================
+   MILESTONES  (kind: body | threshold | today)
+   d in light-seconds; travel/hold in seconds of animation time.
+   ============================================================ */
+function ly(x){ return x * LSY; }
+
+var MILESTONES = [
+ {id:'moon',   kind:'body', name:'THE MOON', sub:'', d:1.3, arrive:'1.3 seconds after emission',
+  ang:28, travel:3.2, hold:2.0, color:'#cfd8e6', size:3.4},
+
+ {id:'sundist',kind:'body', name:'DISTANCE OF THE SUN', sub:'1 astronomical unit', d:498,
+  arrive:'8.3 minutes after emission', ang:208, travel:2.6, hold:1.8, color:'#ffd27d', size:4.4},
+
+ {id:'planets',kind:'body', name:'OUTER PLANETARY SYSTEM', sub:'about the scale of Neptune\u2019s orbit',
+  d:14400, arrive:'about 4 hours after emission', ang:72, travel:2.2, hold:1.7, color:'#8fb3d9', size:3.0},
+
+ {id:'thr1',   kind:'threshold', d:ly(1), travel:3.2, hold:2.7,
+  caption:'Past <span class="cap-key">1 light-year</span>, individual events on Earth become unrecoverable, even in principle. Fewer than one photon per event reaches any realistic collector.'},
+
+ {id:'acen',   kind:'body', name:'ALPHA CENTAURI', sub:'nearest star system', d:ly(4.4),
+  arrive:'Light arrived: 37 AD', ang:197, travel:2.4, hold:2.0, color:'#ffeccb', size:3.6},
+
+ {id:'sirius', kind:'body', name:'SIRIUS', sub:'brightest star in Earth\u2019s sky', d:ly(8.6),
+  arrive:'Light arrived: 42 AD', ang:248, travel:1.8, hold:1.9, color:'#eef6ff', size:4.0},
+
+ {id:'vega',   kind:'body', name:'VEGA', sub:'', d:ly(25),
+  arrive:'Light arrived: 58 AD', ang:152, travel:1.8, hold:1.8, color:'#dfeaff', size:3.6},
+
+ {id:'aldebaran', kind:'body', name:'ALDEBARAN', sub:'orange giant', d:ly(65),
+  arrive:'Light arrived: 98 AD', ang:58, travel:1.8, hold:1.8, color:'#ffb27a', size:3.8},
+
+ {id:'thr100', kind:'threshold', d:ly(100), travel:1.6, hold:2.7,
+  caption:'Past <span class="cap-key">100 light-years</span>, no image of the surface survives. Only Earth\u2019s light curve and spectrum remain readable.'},
+
+ {id:'spica',  kind:'body', name:'SPICA', sub:'', d:ly(250),
+  arrive:'Light arrived: about 283 AD', ang:215, travel:1.9, hold:1.8, color:'#bfd3ff', size:3.6},
+
+ {id:'polaris',kind:'body', name:'POLARIS', sub:'the North Star', d:ly(430),
+  arrive:'Light arrived: mid-400s AD', ang:90, travel:1.9, hold:2.1, color:'#fff3d6', size:3.8,
+  uncertain:'distance uncertain: 320 to 450 ly'},
+
+ {id:'pleiades', kind:'body', name:'THE PLEIADES', sub:'open star cluster', d:ly(444),
+  arrive:'Light arrived: about 477 AD', ang:42, travel:1.2, hold:1.8, color:'#cfe4ff', size:3.0, cluster:true},
+
+ {id:'betelgeuse', kind:'body', name:'BETELGEUSE', sub:'red supergiant', d:ly(550),
+  arrive:'Light arrived: 6th century AD', ang:299, travel:1.5, hold:2.1, color:'#ff8a5c', size:4.4,
+  uncertain:'distance uncertain: 400 to 650 ly'},
+
+ {id:'rigel',  kind:'body', name:'RIGEL', sub:'blue supergiant', d:ly(860),
+  arrive:'Light arrived: about 890 AD', ang:322, travel:1.6, hold:1.8, color:'#d5e4ff', size:4.2},
+
+ {id:'orion',  kind:'body', name:'ORION NEBULA', sub:'stellar nursery', d:ly(1344),
+  arrive:'Light arrived: 1377 AD', ang:311, travel:1.8, hold:1.9, color:'#b9a8ff', size:9, nebula:true},
+
+ {id:'bh3',    kind:'body', name:'GAIA BH3', sub:'nearest known dormant black hole, 33 solar masses',
+  d:ly(1926), arrive:'Light arrived: about 1959 AD', ang:132, travel:2.0, hold:2.4, color:'#c9a6ff', size:4.5, bh:true},
+
+ {id:'today',  kind:'today', name:'THE WAVEFRONT TODAY', sub:'',
+  d:ly(TOTAL_LY), arrive:'about 3 photons per m\u00B2 per day remain', ang:-18,
+  travel:2.2, hold:2.5, color:'#ffd27d', size:0}
+];
+
+/* Closing phases after the shell reaches today */
+var PHASES = [
+ {id:'annulus', dur:4.6,
+  caption:'The shell is not a thin line. Light emitted across all of 33 AD forms a wavefront <span class="cap-key">1 light-year thick</span>.'},
+ {id:'lobe', dur:4.6,
+  caption:'True geometry: only the <span class="cap-key">day side</span> reflects. The bright lobe sweeps around the ecliptic once each year.'},
+ {id:'apollo', dur:4.8,
+  caption:'Every moment emits its own shell. Apollo 11\u2019s broadcasts, 1969, are now <span class="cap-key">57 light-years</span> out. Radius = current year minus event year.'},
+ {id:'end', dur:2.2, caption:''}
+];
+
+/* ============================================================
+   TIMELINE  (piecewise map: animation seconds -> log radius)
+   ============================================================ */
+var SEGMENTS = [];   // {t0,t1,type:'travel'|'hold'|'phase', lr0,lr1, m (milestone idx), ph (phase idx)}
+var TOTAL_T = 0;
+
+(function buildTimeline(){
+  var t = 0, prevLr = Math.log(R0);
+  for (var i = 0; i < MILESTONES.length; i++){
+    var m = MILESTONES[i], lr = Math.log(m.d);
+    SEGMENTS.push({t0:t, t1:t + m.travel, type:'travel', lr0:prevLr, lr1:lr, m:i});
+    t += m.travel;
+    SEGMENTS.push({t0:t, t1:t + m.hold, type:'hold', lr0:lr, lr1:lr, m:i});
+    t += m.hold;
+    prevLr = lr;
+  }
+  for (var p = 0; p < PHASES.length; p++){
+    SEGMENTS.push({t0:t, t1:t + PHASES[p].dur, type:'phase', lr0:prevLr, lr1:prevLr, ph:p});
+    t += PHASES[p].dur;
+  }
+  TOTAL_T = t;
+})();
+
+function easeInOut(x){ return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3)/2; }
+function clamp(v,a,b){ return v < a ? a : (v > b ? b : v); }
+
+/* State at animation time t */
+function stateAt(t){
+  t = clamp(t, 0, TOTAL_T);
+  var s = SEGMENTS[SEGMENTS.length - 1];
+  for (var i = 0; i < SEGMENTS.length; i++){
+    if (t <= SEGMENTS[i].t1){ s = SEGMENTS[i]; break; }
+  }
+  var r;
+  if (s.type === 'travel'){
+    var u = (t - s.t0) / (s.t1 - s.t0);
+    r = Math.exp(s.lr0 + (s.lr1 - s.lr0) * easeInOut(u));
+  } else {
+    r = Math.exp(s.lr0);
+  }
+  /* active milestone callout window: its hold, padded */
+  var active = -1, activeA = 0, holdT = 0;
+  for (var j = 0; j < SEGMENTS.length; j++){
+    var g = SEGMENTS[j];
+    if (g.type !== 'hold') continue;
+    var w0 = g.t0 - 0.15, w1 = g.t1 + 0.55;
+    if (t >= w0 && t <= w1){
+      active = g.m;
+      holdT = t - g.t0;
+      var fin = clamp((t - w0)/0.45, 0, 1);
+      var fout = clamp((w1 - t)/0.5, 0, 1);
+      activeA = Math.min(fin, fout);
+      break;
+    }
+  }
+  var phase = null, phaseT = 0, phaseA = 0;
+  if (s.type === 'phase'){
+    phase = PHASES[s.ph].id;
+    phaseT = t - s.t0;
+    phaseA = Math.min(clamp(phaseT/0.6,0,1), clamp((s.t1 - t)/0.6,0,1));
+    if (phase === 'end') phaseA = clamp(phaseT/0.9,0,1);
+  }
+  return {t:t, r:r, seg:s, active:active, activeA:activeA, holdT:holdT,
+          phase:phase, phaseT:phaseT, phaseA:phaseA};
+}
+
+/* ============================================================
+   FORMATTERS
+   ============================================================ */
+var SUP = {'0':'\u2070','1':'\u00B9','2':'\u00B2','3':'\u00B3','4':'\u2074',
+           '5':'\u2075','6':'\u2076','7':'\u2077','8':'\u2078','9':'\u2079','-':'\u207B'};
+function sup(n){
+  var s = String(n), o = '';
+  for (var i=0;i<s.length;i++) o += SUP[s[i]] || '';
+  return o;
+}
+function fmtDist(rls){
+  if (rls < 120)      return trim1(rls) + ' light-seconds';
+  var m = rls/60;
+  if (m < 120)        return trim1(m) + ' light-minutes';
+  var h = m/60;
+  if (h < 48)         return trim1(h) + ' light-hours';
+  var d = h/24;
+  if (d < 365)        return trim1(d) + ' light-days';
+  var y = rls/LSY;
+  if (y < 10)         return y.toFixed(1) + ' light-years';
+  return Math.round(y).toLocaleString('en-US') + ' light-years';
+}
+function trim1(v){ return v < 10 ? v.toFixed(1) : String(Math.round(v)); }
+function fmtYear(rls){
+  var y = rls/LSY;
+  if (y < 1) return '33 AD';
+  var yr = Math.min(2026, Math.floor(33 + y + 1e-6));
+  return yr + ' AD';
+}
+function fmtFlux(rls){
+  var rly = rls/LSY;
+  var v = FLUX_TODAY * Math.pow(TOTAL_LY/rly, 2);
+  if (v < 9.9) return v.toFixed(1);
+  if (v < 10000) return Math.round(v).toLocaleString('en-US');
+  var e = Math.floor(Math.log10(v));
+  var mant = v/Math.pow(10, e);
+  return mant.toFixed(1) + '\u00D710' + sup(e);
+}
+
+/* ============================================================
+   DOM
+   ============================================================ */
+var stage = document.getElementById('stage');
+var cv = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+var hudYear = document.getElementById('hud-year');
+var hudDist = document.getElementById('hud-dist');
+var hudFlux = document.getElementById('hud-flux-v');
+var captionEl = document.getElementById('caption');
+var introEl = document.getElementById('intro');
+var minititle = document.getElementById('minititle');
+var endcard = document.getElementById('endcard');
+var playbtn = document.getElementById('playbtn');
+var restartbtn = document.getElementById('restartbtn');
+var replaybtn = document.getElementById('replaybtn');
+var geobtn = document.getElementById('geobtn');
+var scrub = document.getElementById('scrub');
+var ticksEl = document.getElementById('ticks');
+
+var W = 0, H = 0, DPR = 1, RING = 0, CX = 0, CY = 0;
+function resize(){
+  var rect = stage.getBoundingClientRect();
+  W = Math.max(2, rect.width); H = Math.max(2, rect.height);
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  RING = R_FRAC * H; CX = W/2; CY = H/2 + H*0.012;
+}
+window.addEventListener('resize', resize);
+resize();
+
+/* scrubber milestone ticks */
+(function buildTicks(){
+  for (var i=0;i<SEGMENTS.length;i++){
+    var s = SEGMENTS[i];
+    if (s.type !== 'hold') continue;
+    var m = MILESTONES[s.m];
+    var el = document.createElement('div');
+    el.className = 'tick' + (m.kind === 'threshold' || m.kind === 'today' ? ' thr' : '');
+    el.style.left = (100 * s.t0 / TOTAL_T) + '%';
+    ticksEl.appendChild(el);
+  }
+})();
+
+/* ============================================================
+   STAR FIELDS
+   ============================================================ */
+function mulberry(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    var z = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    z = z + Math.imul(z ^ z >>> 7, 61 | z) ^ z;
+    return ((z ^ z >>> 14) >>> 0) / 4294967296;
+  };
+}
+var rand = mulberry(3301);
+
+/* decorative fixed stars (no parallax, pure texture) */
+var FIXED = [];
+for (var i=0;i<130;i++){
+  FIXED.push({x:rand(), y:rand(), s:0.4 + rand()*1.0, a:0.05 + rand()*0.16, ph:rand()*6.28});
+}
+/* streaming stars with real (log-uniform) distances: these carry the zoom */
+var STREAM = [];
+(function(){
+  var lmin = Math.log(ly(0.35)), lmax = Math.log(ly(4600));
+  for (var i=0;i<300;i++){
+    var warm = rand() < 0.14;
+    STREAM.push({
+      d: Math.exp(lmin + rand()*(lmax-lmin)),
+      ang: rand()*Math.PI*2,
+      s: 0.7 + rand()*1.5,
+      a: 0.25 + rand()*0.5,
+      ph: rand()*6.28,
+      c: warm ? '255,205,150' : '205,224,245'
+    });
+  }
+})();
+
+function screenR(d, r){ return RING * Math.pow(d/r, K); }
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+var geoManual = false;   /* True geometry toggle */
+
+function ringAlpha(r){
+  /* inverse square, log compressed: full at emission, ~0.34 today */
+  var u = clamp((Math.log(r) - Math.log(R0)) / (Math.log(ly(TOTAL_LY)) - Math.log(R0)), 0, 1);
+  return 1.0 - 0.66*u;
+}
+
+function drawBackground(now){
+  var g = ctx.createRadialGradient(CX, CY, 0, CX, CY, Math.max(W,H)*0.72);
+  g.addColorStop(0, '#0c1424');
+  g.addColorStop(0.55, '#060a14');
+  g.addColorStop(1, '#030509');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
+  for (var i=0;i<FIXED.length;i++){
+    var s = FIXED[i];
+    var tw = 0.75 + 0.25*Math.sin(now*0.0011 + s.ph);
+    ctx.globalAlpha = s.a * tw;
+    ctx.fillStyle = '#cfe0f2';
+    ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.s, 0, 6.2832); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawStreamStars(r, now){
+  for (var i=0;i<STREAM.length;i++){
+    var s = STREAM[i];
+    var sr = screenR(s.d, r);
+    if (sr > 1.62*RING || sr < 0.03*RING) continue;
+    var edge = clamp((1.62*RING - sr)/(0.5*RING), 0, 1);
+    var core = clamp(sr/(0.10*RING), 0, 1);
+    var tw = 0.8 + 0.2*Math.sin(now*0.0016 + s.ph);
+    var a = s.a * edge * core * tw;
+    if (a <= 0.01) continue;
+    var x = CX + sr*Math.cos(s.ang), y = CY + sr*Math.sin(s.ang);
+    ctx.globalAlpha = a;
+    ctx.fillStyle = 'rgb(' + s.c + ')';
+    ctx.beginPath(); ctx.arc(x, y, s.s, 0, 6.2832); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawDecadeRings(r){
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  for (var k = 0; k <= 11; k++){
+    var d = Math.pow(10, k);
+    if (d > ly(4000)) break;
+    var sr = screenR(d, r);
+    if (sr < 0.15*RING || sr > 1.45*RING) continue;
+    var band = Math.min(clamp((sr - 0.15*RING)/(0.16*RING),0,1),
+                        clamp((1.45*RING - sr)/(0.22*RING),0,1));
+    ctx.globalAlpha = 0.10 * band;
+    ctx.strokeStyle = '#7f97ba';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(CX, CY, sr, 0, 6.2832); ctx.stroke();
+    ctx.globalAlpha = 0.5 * band;
+    ctx.fillStyle = '#5f6e86';
+    ctx.font = '9px ' + MONO;
+    var lx = CX + sr*Math.cos(-0.32), lyy = CY + sr*Math.sin(-0.32);
+    ctx.fillText(fmtDist(d), lx + 6, lyy);
+  }
+  ctx.globalAlpha = 1;
+}
+
+var MONO = "'IBM Plex Mono', ui-monospace, Menlo, monospace";
+var SERIF = "'Spectral', Georgia, serif";
+
+function drawMarker(m, x, y, a, scale){
+  scale = scale || 1;
+  ctx.globalAlpha = a;
+  if (m.nebula){
+    var g = ctx.createRadialGradient(x, y, 0, x, y, m.size*2.4*scale);
+    g.addColorStop(0, 'rgba(196,178,255,0.85)');
+    g.addColorStop(0.5, 'rgba(150,130,230,0.32)');
+    g.addColorStop(1, 'rgba(150,130,230,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, m.size*2.4*scale, 0, 6.2832); ctx.fill();
+  } else if (m.cluster){
+    ctx.fillStyle = m.color;
+    var offs = [[0,0],[5,-3],[-4,-5],[3,5],[-6,3],[7,2]];
+    for (var i=0;i<offs.length;i++){
+      ctx.beginPath();
+      ctx.arc(x + offs[i][0]*scale, y + offs[i][1]*scale, 1.5*scale, 0, 6.2832);
+      ctx.fill();
+    }
+  } else if (m.bh){
+    var g2 = ctx.createRadialGradient(x, y, 0, x, y, m.size*3*scale);
+    g2.addColorStop(0, 'rgba(120,80,180,0.32)');
+    g2.addColorStop(1, 'rgba(120,80,180,0)');
+    ctx.fillStyle = g2;
+    ctx.beginPath(); ctx.arc(x, y, m.size*3*scale, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = '#05030a';
+    ctx.beginPath(); ctx.arc(x, y, m.size*0.85*scale, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = m.color; ctx.lineWidth = 1.4*scale;
+    ctx.beginPath(); ctx.arc(x, y, m.size*1.15*scale, 0, 6.2832); ctx.stroke();
+  } else {
+    ctx.shadowColor = m.color; ctx.shadowBlur = 9*scale;
+    ctx.fillStyle = m.color;
+    ctx.beginPath(); ctx.arc(x, y, m.size*0.85*scale, 0, 6.2832); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawMilestones(st){
+  var r = st.r;
+  for (var i=0;i<MILESTONES.length;i++){
+    var m = MILESTONES[i];
+    if (m.kind !== 'body') continue;
+    var sr = screenR(m.d, r);
+    if (sr > 1.58*RING || sr < 0.09*RING) continue;
+    var ang = m.ang * Math.PI/180;
+    var x = CX + sr*Math.cos(-ang), y = CY + sr*Math.sin(-ang);
+    var passed = m.d < r*0.985;
+    var a;
+    if (passed){
+      a = 0.5 * clamp((sr - 0.09*RING)/(0.12*RING), 0, 1);
+    } else {
+      a = 0.16 + 0.7 * clamp((1.58*RING - sr)/(0.62*RING), 0, 1);
+    }
+    if (st.active === i) a = 1;
+    drawMarker(m, x, y, a, st.active === i ? 1.25 : 1);
+    /* trailing name for passed objects, small and quiet */
+    if (passed && sr > 0.2*RING && st.active !== i){
+      ctx.globalAlpha = 0.32 * clamp((sr - 0.2*RING)/(0.1*RING),0,1);
+      ctx.fillStyle = '#8fa2bd';
+      ctx.font = '8.5px ' + MONO;
+      ctx.textAlign = 'center';
+      ctx.fillText(m.name, x, y - 10);
+      ctx.globalAlpha = 1;
+    }
+  }
+}
+
+function drawWavefront(st, now){
+  var r = st.r;
+  var baseA = ringAlpha(r);
+  var lobeOn = geoManual || st.phase === 'lobe';
+  var lw = 2.6 - 1.1*clamp((Math.log(r)-Math.log(R0)) /
+            (Math.log(ly(TOTAL_LY))-Math.log(R0)), 0, 1);
+
+  if (!lobeOn){
+    ctx.shadowColor = 'rgba(190,225,255,0.9)';
+    ctx.shadowBlur = 18*baseA + 4;
+    ctx.strokeStyle = 'rgba(223,241,255,' + (0.55 + 0.45*baseA).toFixed(3) + ')';
+    ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.arc(CX, CY, RING, 0, 6.2832); ctx.stroke();
+    ctx.shadowBlur = 0;
+    /* inner soft glow */
+    ctx.strokeStyle = 'rgba(160,205,250,' + (0.16*baseA + 0.05).toFixed(3) + ')';
+    ctx.lineWidth = lw*3.4;
+    ctx.beginPath(); ctx.arc(CX, CY, RING, 0, 6.2832); ctx.stroke();
+  } else {
+    /* day-side lobe: brightness varies with angle, sweeps annually */
+    var sweep = now*0.0011;
+    var N = 96;
+    for (var i=0;i<N;i++){
+      var a0 = (i/N)*6.2832, a1 = ((i+1)/N)*6.2832 + 0.004;
+      var mid = (a0+a1)/2;
+      var lobe = Math.pow(Math.max(0, Math.cos(mid - sweep)), 1.6);
+      var aa = (0.10 + 0.9*lobe) * (0.55 + 0.45*baseA);
+      ctx.strokeStyle = 'rgba(223,241,255,' + aa.toFixed(3) + ')';
+      ctx.lineWidth = lw + 1.6*lobe;
+      ctx.beginPath(); ctx.arc(CX, CY, RING, a0, a1); ctx.stroke();
+    }
+  }
+}
+
+function drawEarth(st){
+  var r = st.r;
+  var er = 2.2 + 4*Math.min(1, Math.sqrt(0.5/Math.max(r,0.001)));
+  var g = ctx.createRadialGradient(CX-er*0.3, CY-er*0.3, 0, CX, CY, er*2.6);
+  g.addColorStop(0, 'rgba(140,190,255,0.9)');
+  g.addColorStop(0.4, 'rgba(70,120,210,0.55)');
+  g.addColorStop(1, 'rgba(70,120,210,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(CX, CY, er*2.6, 0, 6.2832); ctx.fill();
+  ctx.fillStyle = '#a8ccff';
+  ctx.beginPath(); ctx.arc(CX, CY, er, 0, 6.2832); ctx.fill();
+  ctx.globalAlpha = 0.4;
+  ctx.fillStyle = '#7d90ad';
+  ctx.font = '8.5px ' + MONO;
+  ctx.textAlign = 'center';
+  ctx.fillText('EARTH', CX, CY + er + 13);
+  ctx.globalAlpha = 1;
+}
+
+/* threshold pulse: bright expanding flash when crossing 1 ly / 100 ly */
+function drawThresholdPulse(st){
+  if (st.active < 0) return;
+  var m = MILESTONES[st.active];
+  if (m.kind !== 'threshold') return;
+  var u = clamp(st.holdT/1.4, 0, 1);
+  var a = st.activeA * (1-u) * 0.8;
+  if (a <= 0.01) return;
+  ctx.strokeStyle = 'rgba(255,210,125,' + a.toFixed(3) + ')';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(CX, CY, RING*(1 + 0.10*u), 0, 6.2832); ctx.stroke();
+}
+
+/* callout for the active body milestone */
+function roundRect(x,y,w,h,rr){
+  ctx.beginPath();
+  ctx.moveTo(x+rr,y);
+  ctx.arcTo(x+w,y,x+w,y+h,rr);
+  ctx.arcTo(x+w,y+h,x,y+h,rr);
+  ctx.arcTo(x,y+h,x,y,rr);
+  ctx.arcTo(x,y,x+w,y,rr);
+  ctx.closePath();
+}
+function drawCallout(st){
+  if (st.active < 0 || st.activeA <= 0.01) return;
+  var m = MILESTONES[st.active];
+  if (m.kind === 'threshold') return;
+  var A = st.activeA;
+  var ang = (m.ang||0) * Math.PI/180;
+  var px = CX + RING*Math.cos(-ang), py = CY + RING*Math.sin(-ang);
+
+  /* highlight pulse at the marker */
+  var pu = (st.holdT % 1.6)/1.6;
+  ctx.strokeStyle = 'rgba(255,255,255,' + (A*(1-pu)*0.5).toFixed(3) + ')';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(px, py, 7 + 15*pu, 0, 6.2832); ctx.stroke();
+
+  /* content lines */
+  var lines = [];
+  lines.push({t:m.name, f:'600 12.5px ' + MONO, c:'#eef5ff', h:17, ls:1.4});
+  if (m.sub) lines.push({t:m.sub, f:'400 10px ' + MONO, c:'#8fa2bd', h:14, ls:0.4});
+  if (m.kind !== 'today')
+    lines.push({t:fmtDist(m.d), f:'500 11px ' + MONO, c:'#ffd27d', h:16, ls:0.6});
+  else
+    lines.push({t:'1,993 light-years', f:'500 11px ' + MONO, c:'#ffd27d', h:16, ls:0.6});
+  lines.push({t:m.arrive, f:'400 10.5px ' + MONO, c:'#c9d6e8', h:15, ls:0.4});
+  if (m.uncertain) lines.push({t:m.uncertain, f:'400 9px ' + MONO, c:'#9aa7ff', h:14, ls:0.4});
+
+  var wMax = 0;
+  for (var i=0;i<lines.length;i++){
+    ctx.font = lines[i].f;
+    wMax = Math.max(wMax, ctx.measureText(lines[i].t).width);
+  }
+  var pad = 13, bw = wMax + pad*2, bh = 10;
+  for (var j=0;j<lines.length;j++) bh += lines[j].h;
+  bh += 6;
+
+  /* place box radially inward from the marker */
+  var inx = px - 0.34*RING*Math.cos(-ang);
+  var iny = py - 0.34*RING*Math.sin(-ang);
+  var bx = clamp(inx - bw/2, 14, W - bw - 14);
+  var by = clamp(iny - bh/2, 14, H - bh - 64);
+
+  ctx.globalAlpha = A;
+  /* leader line */
+  ctx.strokeStyle = 'rgba(180,205,240,0.55)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(px, py);
+  ctx.lineTo(clamp(px - 0.16*RING*Math.cos(-ang), bx, bx+bw),
+             clamp(py - 0.16*RING*Math.sin(-ang), by, by+bh));
+  ctx.stroke();
+  /* box */
+  ctx.fillStyle = 'rgba(6,11,22,0.86)';
+  ctx.strokeStyle = m.kind === 'today' ? 'rgba(255,210,125,0.6)' : 'rgba(140,170,215,0.35)';
+  roundRect(bx, by, bw, bh, 4);
+  ctx.fill(); ctx.stroke();
+  /* text */
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  var ty = by + 8;
+  for (var k2=0;k2<lines.length;k2++){
+    var L = lines[k2];
+    ty += L.h;
+    ctx.font = L.f; ctx.fillStyle = L.c;
+    if (L.ls > 0.5){
+      var xx = bx + pad;
+      for (var c=0;c<L.t.length;c++){
+        ctx.fillText(L.t[c], xx, ty - 4);
+        xx += ctx.measureText(L.t[c]).width + L.ls;
+      }
+    } else {
+      ctx.fillText(L.t, bx + pad, ty - 4);
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* closing overlays */
+function drawAnnulusInset(st){
+  if (st.phase !== 'annulus' || st.phaseA <= 0.01) return;
+  var A = st.phaseA;
+  var ix = W - Math.min(190, W*0.16), iy = H*0.32, ir = Math.min(78, H*0.14);
+  var ang = -0.42; /* anchor point on the main ring, upper right */
+  var ax = CX + RING*Math.cos(ang), ay = CY + RING*Math.sin(ang);
+
+  ctx.globalAlpha = A;
+  ctx.strokeStyle = 'rgba(160,190,230,0.5)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3,4]);
+  ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ix - ir*0.8, iy + ir*0.5); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = 'rgba(6,11,22,0.9)';
+  ctx.strokeStyle = 'rgba(140,170,215,0.45)';
+  ctx.beginPath(); ctx.arc(ix, iy, ir, 0, 6.2832); ctx.fill(); ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath(); ctx.arc(ix, iy, ir-1, 0, 6.2832); ctx.clip();
+  /* two edges of the annulus, magnified */
+  var gap = ir*0.42;
+  ctx.strokeStyle = 'rgba(223,241,255,0.95)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(ix - ir*3.2, iy, ir*3.2 + gap/2, -0.4, 0.4); ctx.stroke();
+  ctx.strokeStyle = 'rgba(223,241,255,0.6)'; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.arc(ix - ir*3.2, iy, ir*3.2 - gap/2, -0.4, 0.4); ctx.stroke();
+  /* gold measure */
+  ctx.strokeStyle = 'rgba(255,210,125,0.9)'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(ix + gap*0.1, iy - gap/2); ctx.lineTo(ix + gap*0.1, iy + gap/2);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.textAlign = 'center';
+  ctx.font = '8.5px ' + MONO;
+  ctx.fillStyle = '#c9d6e8';
+  ctx.fillText('DEC 33 AD', ix - ir*0.52, iy - ir*0.62);
+  ctx.fillText('JAN 33 AD', ix + ir*0.55, iy + ir*0.72);
+  ctx.fillStyle = '#ffd27d';
+  ctx.fillText('1 LIGHT-YEAR', ix, iy - ir - 10);
+  ctx.fillStyle = '#5f6e86';
+  ctx.fillText('WAVEFRONT MAGNIFIED ~300\u00D7', ix, iy + ir + 14);
+  ctx.globalAlpha = 1;
+}
+
+function drawApollo(st){
+  var show = 0;
+  if (st.phase === 'apollo') show = st.phaseA;
+  if (st.phase === 'end') show = 1;
+  if (show <= 0.01) return;
+  var r57 = RING * Math.pow(57/TOTAL_LY, K);
+  ctx.globalAlpha = show;
+  ctx.strokeStyle = 'rgba(255,210,125,0.85)';
+  ctx.lineWidth = 1.4;
+  ctx.shadowColor = 'rgba(255,210,125,0.7)'; ctx.shadowBlur = 8;
+  ctx.beginPath(); ctx.arc(CX, CY, r57, 0, 6.2832); ctx.stroke();
+  ctx.shadowBlur = 0;
+  var ang = 3.55;
+  var lx = CX + r57*Math.cos(ang), lyy = CY + r57*Math.sin(ang);
+  ctx.textAlign = 'right';
+  ctx.font = '600 10px ' + MONO; ctx.fillStyle = '#ffd27d';
+  ctx.fillText('APOLLO 11 BROADCASTS \u00B7 1969', lx - 10, lyy - 4);
+  ctx.font = '400 9px ' + MONO; ctx.fillStyle = '#c9d6e8';
+  ctx.fillText('57 light-years out', lx - 10, lyy + 9);
+  ctx.globalAlpha = 1;
+}
+
+/* ============================================================
+   HUD, CAPTIONS, PLAYBACK
+   ============================================================ */
+var playing = true;
+var animT = 0;
+var lastNow = null;
+var wasPlayingBeforeScrub = false;
+var endShown = false;
+var reduceMotion = false;
+try {
+  reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+} catch(e){}
+if (reduceMotion) playing = false;
+
+function setCaption(html){
+  if (html){
+    if (captionEl.innerHTML !== html) captionEl.innerHTML = html;
+    captionEl.classList.add('show');
+  } else {
+    captionEl.classList.remove('show');
+  }
+}
+
+function updateChrome(st){
+  hudYear.textContent = fmtYear(st.r);
+  hudDist.textContent = fmtDist(st.r);
+  hudFlux.textContent = fmtFlux(st.r);
+
+  /* intro / mini title */
+  if (st.t > 2.7){ introEl.classList.add('gone'); minititle.classList.add('show'); }
+  else { introEl.classList.remove('gone'); minititle.classList.remove('show'); }
+
+  /* captions: threshold holds, closing phases */
+  var cap = '';
+  if (st.active >= 0 && MILESTONES[st.active].kind === 'threshold' && st.activeA > 0.15){
+    cap = MILESTONES[st.active].caption;
+  }
+  if (st.phase && st.phase !== 'end'){
+    var ph = null;
+    for (var i=0;i<PHASES.length;i++) if (PHASES[i].id === st.phase) ph = PHASES[i];
+    if (ph && st.phaseA > 0.1) cap = ph.caption;
+  }
+  if (st.phase === 'end' && st.phaseT < 0.4) cap = '';
+  setCaption(cap);
+
+  /* end card */
+  var shouldEnd = st.phase === 'end' && st.phaseT > 0.6;
+  if (shouldEnd && !endShown){ endcard.classList.add('show'); endShown = true; playing = false; syncPlayBtn(); }
+  if (!shouldEnd && endShown){ endcard.classList.remove('show'); endShown = false; }
+
+  if (!scrubbing) scrub.value = String(Math.round(10000 * st.t / TOTAL_T));
+}
+
+function frame(now){
+  if (lastNow === null) lastNow = now;
+  var dt = Math.min(0.1, (now - lastNow)/1000);
+  lastNow = now;
+  if (playing){
+    animT = Math.min(TOTAL_T, animT + dt);
+  }
+  var st = stateAt(animT);
+
+  drawBackground(now);
+  drawStreamStars(st.r, now);
+  drawDecadeRings(st.r);
+  drawMilestones(st);
+  drawWavefront(st, now);
+  drawThresholdPulse(st);
+  drawEarth(st);
+  drawApollo(st);
+  drawAnnulusInset(st);
+  drawCallout(st);
+
+  updateChrome(st);
+  requestAnimationFrame(frame);
+}
+
+/* ---------- controls ---------- */
+function syncPlayBtn(){ playbtn.textContent = playing ? 'Pause' : 'Play'; }
+playbtn.addEventListener('click', function(){
+  if (animT >= TOTAL_T - 0.01 && !playing){ animT = 0; endShown = false; endcard.classList.remove('show'); }
+  playing = !playing; syncPlayBtn();
+});
+function restart(){
+  animT = 0; endShown = false; endcard.classList.remove('show');
+  playing = true; syncPlayBtn();
+}
+restartbtn.addEventListener('click', restart);
+replaybtn.addEventListener('click', restart);
+
+geobtn.addEventListener('click', function(){
+  geoManual = !geoManual;
+  geobtn.classList.toggle('on', geoManual);
+  geobtn.setAttribute('aria-pressed', geoManual ? 'true' : 'false');
+});
+
+var scrubbing = false;
+scrub.addEventListener('pointerdown', function(){
+  scrubbing = true; wasPlayingBeforeScrub = playing; playing = false; syncPlayBtn();
+});
+scrub.addEventListener('input', function(){
+  animT = TOTAL_T * (Number(scrub.value)/10000);
+  if (animT < TOTAL_T - 0.05 && endShown){ endcard.classList.remove('show'); endShown = false; }
+});
+window.addEventListener('pointerup', function(){
+  if (!scrubbing) return;
+  scrubbing = false;
+  if (wasPlayingBeforeScrub && animT < TOTAL_T - 0.01){ playing = true; syncPlayBtn(); }
+});
+scrub.addEventListener('change', function(){
+  animT = TOTAL_T * (Number(scrub.value)/10000);
+});
+
+stage.addEventListener('keydown', function(e){
+  if (e.code === 'Space'){ e.preventDefault(); playbtn.click(); }
+});
+
+/* idle-hide the chrome while playing (clean for screen recording) */
+var idleTimer = null;
+function poke(){
+  document.body.classList.remove('ui-hidden');
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = setTimeout(function(){
+    if (playing && !scrubbing) document.body.classList.add('ui-hidden');
+  }, 3000);
+}
+window.addEventListener('pointermove', poke);
+window.addEventListener('pointerdown', poke);
+poke();
+
+syncPlayBtn();
+requestAnimationFrame(frame);
+
+})();
+</script>
+</body>
+</html>
