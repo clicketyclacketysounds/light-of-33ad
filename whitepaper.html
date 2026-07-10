@@ -76,11 +76,16 @@ body{
 /* first paragraph of the abstract: drop the leading rule, add presence */
 .paper > h2:first-of-type{border-top:0;padding-top:0;margin-top:0}
 
-/* fact / assumption / uncertain labels */
+/* fact / assumption / uncertain labels (now only in tables) */
 .lab{color:var(--dim);font-style:italic}
 .lab-fact{color:var(--fact)}
 .lab-assumption{color:var(--assume)}
 .lab-uncertain{color:var(--unc)}
+
+/* asterisk markers on assumptions / uncertain values */
+.paper sup{color:var(--gold);font-weight:600;font-size:.7em;padding-left:1px}
+/* the asterisk footnote paragraph, just before References */
+.paper h2#references{margin-top:2.4rem}
 
 /* tables */
 .tablewrap{overflow-x:auto;margin:1.6rem 0 2rem;
@@ -116,6 +121,7 @@ body{
   .paper thead th{color:#333;border-bottom-color:#999}
   .paper tbody td:first-child{color:#000}
   .lab{color:#556}.lab-fact{color:#2f6f57}.lab-assumption{color:#3b47a8}.lab-uncertain{color:#6b3fa0}
+  .paper sup{color:#8a6a1e}
   h2,h3{break-after:avoid}.tablewrap{break-inside:avoid}
 }
 </style>
@@ -139,8 +145,9 @@ body{
       Thought experiment conceived by Paul J. Clark on July 7, 2026.<br>
       Researched and compiled by Claude Fable 5 on July 7, 2026.
     </p>
-    <p class="note">Working paper, 2026. Every substantive claim is labeled fact,
-      assumption, or uncertain. Derived quantities show their inputs.</p>
+    <p class="note">Working paper, 2026. Quantitative claims follow from the stated
+      inputs or from standard reference values. An asterisk marks a stated assumption
+      or a genuinely uncertain quantity.</p>
   </header>
 
 <h2 id="abstract">Abstract</h2>
@@ -170,8 +177,8 @@ vanishing, a distinction we make precise and bound.</p>
 <h2 id="1-introduction">1. Introduction</h2>
 <p>Consider a familiar fact rendered strange. Earth is not a light
 source but a reflector: it intercepts a portion of the Sun's output and
-scatters roughly a third of it back into space in all directions <span class="lab">(<span class="lab-fact">fact</span>)</span>.
-Every reflected photon that escapes to space departs carrying, in its
+scatters roughly a third of it back into space in all directions. Every
+reflected photon that escapes to space departs carrying, in its
 direction, timing, wavelength, and polarization, some record of the
 surface, atmosphere, and geometry that produced it. Integrated over the
 sunlit hemisphere and over time, this outbound flux is a continuously
@@ -190,17 +197,16 @@ contribution is to locate, quantitatively, the boundary between what
 survives and what does not, and to argue that this boundary is set by
 hard physical limits (diffraction, contrast, and above all shot noise)
 rather than by the state of our instruments.</p>
-<p><strong>Reference frame <span class="lab">(<span class="lab-assumption">assumption</span>, stated)</span>.</strong> Distances and
-the shell's center are given in the Sun's rest frame, treated as
-effectively inertial over this span. The justification is quantitative:
-the Sun's galactic-orbit velocity changes the local inertial frame by
-only about 13 m/s over 1,993 years <span class="lab">(<span class="lab-fact">fact</span>-based estimate)</span>, negligible
-against the phenomena considered. In the galactocentric frame the shell
-stays centered on the solar system's 33 AD position while the solar
-system itself has since drifted about 1.5 ly (230 km/s times 1,993 yr)
-from that point <span class="lab">(<span class="lab-fact">fact</span>-based calculation)</span>. Nearby stars have shifted 0.1
-to 0.2 ly from their own peculiar motions of roughly 20 to 30 km/s
-<span class="lab">(<span class="lab-fact">fact</span>)</span>; real, but small against the distances tabulated below.</p>
+<p><strong>Reference frame.</strong><sup>*</sup> Distances and the
+shell's center are given in the Sun's rest frame, treated as effectively
+inertial over this span. The justification is quantitative: the Sun's
+galactic-orbit velocity changes the local inertial frame by only about
+13 m/s over 1,993 years, negligible against the phenomena considered. In
+the galactocentric frame the shell stays centered on the solar system's
+33 AD position while the solar system itself has since drifted about 1.5
+ly (230 km/s times 1,993 yr) from that point. Nearby stars have shifted
+0.1 to 0.2 ly from their own peculiar motions of roughly 20 to 30 km/s;
+real, but small against the distances tabulated below.</p>
 <p>Throughout, we hold to three disciplines: every number is derived
 from stated inputs or cited; distances known to be uncertain (notably
 Polaris, Betelgeuse, and Deneb) are given only as ranges; and we keep a
@@ -209,34 +215,33 @@ returning to it in Section 6.</p>
 <hr />
 <h2 id="2-the-light-shell-today">2. The Light Shell Today</h2>
 <h3 id="21-radius-and-thickness">2.1 Radius and thickness</h3>
-<p>Light travels one light-year per year of proper time in vacuum
-<span class="lab">(<span class="lab-fact">fact</span>)</span>. From 33 AD to 2026 AD is 1,993 years, so the wavefront is 1,993
-ly, equivalently 611 pc, from the solar system <span class="lab">(<span class="lab-fact">fact</span>)</span>. Because
-reflection occurred continuously across the whole of the year rather
-than in an instant, the shell is not a mathematical surface but an
-annulus one light-year thick <span class="lab">(<span class="lab-fact">fact</span>)</span>: its inner edge carries light
-reflected late in 33 AD, its outer edge light reflected early in that
-year.</p>
+<p>Light travels one light-year per year of proper time in vacuum. From
+33 AD to 2026 AD is 1,993 years, so the wavefront is 1,993 ly,
+equivalently 611 pc, from the solar system. Because reflection occurred
+continuously across the whole of the year rather than in an instant, the
+shell is not a mathematical surface but an annulus one light-year thick:
+its inner edge carries light reflected late in 33 AD, its outer edge
+light reflected early in that year.</p>
 <h3 id="22-true-geometry">2.2 True geometry</h3>
 <p>The shell is not a uniform luminous sphere. Only the sunlit
 hemisphere reflects, so at any instant the emission is a lobe filling
 roughly half the sky as seen from Earth, and that lobe sweeps around the
-ecliptic once per year as Earth orbits <span class="lab">(<span class="lab-fact">fact</span>)</span>. Superimposed on the
-annual sweep is a diurnal signal: as the planet rotates, changing
-arrangements of continent, ocean, and cloud modulate the reflected
-brightness by 20 to 30 percent over 24 hours, a variation directly
-measured for the whole-disk Earth by NASA's EPOXI observations <span class="lab">(<span class="lab-fact">fact</span>)</span>.
-Cloud cover, blanketing roughly two-thirds of the surface at any time,
-dominates the total albedo <span class="lab">(<span class="lab-fact">fact</span>)</span>. The consequence for information is
-important and returned to later: the shell is not featureless. It
-carries, imprinted in its temporal and spectral structure, the phase
-geometry of an orbiting planet, a rotation period, and weather.</p>
+ecliptic once per year as Earth orbits. Superimposed on the annual sweep
+is a diurnal signal: as the planet rotates, changing arrangements of
+continent, ocean, and cloud modulate the reflected brightness by 20 to
+30 percent over 24 hours, a variation directly measured for the
+whole-disk Earth by NASA's EPOXI observations. Cloud cover, blanketing
+roughly two-thirds of the surface at any time, dominates the total
+albedo. The consequence for information is important and returned to
+later: the shell is not featureless. It carries, imprinted in its
+temporal and spectral structure, the phase geometry of an orbiting
+planet, a rotation period, and weather.</p>
 <h3 id="23-what-the-shell-has-already-passed">2.3 What the shell has
 already passed</h3>
 <p>The arrival year at any object is simply 33 AD plus its distance in
 light-years. The following objects lie inside the present shell, meaning
-the 33 AD light has already washed over them (distances are fact except
-where flagged):</p>
+the 33 AD light has already washed over them (distances are well
+determined except where flagged):</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -305,35 +310,34 @@ where flagged):</p>
 </table></div>
 <p>Gaia BH3, the nearest known dormant stellar-mass black hole at about
 33 solar masses, is worth noting: the 33 AD light reached it only around
-1959 AD <span class="lab">(<span class="lab-uncertain">uncertain</span> at the few-percent level from its distance)</span>.</p>
+1959 AD, to within a few percent<sup>*</sup>.</p>
 <h3 id="24-the-current-wavefront">2.4 The current wavefront</h3>
 <p>No catalogued object can be pinned exactly at the wavefront, because
 stellar distances near 600 pc carry 5 to 10 percent measurement errors,
-a spread of roughly 100 to 200 ly <span class="lab">(<span class="lab-fact">fact</span> about measurement limits)</span>. The
-front is presently sweeping the general Sadr region of Cygnus near 1,800
-ly <span class="lab">(<span class="lab-uncertain">uncertain</span>)</span> and is approaching, in the coming centuries, the Veil
-Nebula near 2,400 ly (arrival about 2433 AD), the Ring Nebula near 2,570
-ly, and the North America Nebula near 2,590 ly. Deneb is a deliberate
-illustration of honest uncertainty: its published distances span roughly
-1,400 to 2,600 ly, so whether the 33 AD shell has already passed it is
-genuinely unknown <span class="lab">(<span class="lab-uncertain">uncertain</span>)</span>.</p>
+a spread of roughly 100 to 200 ly. The front is presently sweeping the
+general Sadr region of Cygnus near 1,800 ly<sup>*</sup> and is
+approaching, in the coming centuries, the Veil Nebula near 2,400 ly
+(arrival about 2433 AD), the Ring Nebula near 2,570 ly, and the North
+America Nebula near 2,590 ly. Deneb is a deliberate illustration of
+honest uncertainty: its published distances span roughly 1,400 to 2,600
+ly, so whether the 33 AD shell has already passed it is genuinely
+unknown.<sup>*</sup></p>
 <h3 id="25-scale-and-a-general-rule">2.5 Scale, and a general rule</h3>
-<p>A sphere of radius 611 pc encloses on the order of 60 million stars
-(order-of-magnitude estimate, assumption-laden: 0.1 stars per cubic
+<p>A sphere of radius 611 pc encloses on the order of 60 million
+stars<sup>*</sup> (order-of-magnitude estimate: 0.1 stars per cubic
 parsec thinned by the disk's roughly 300 pc scale height). The same
 light will reach the galactic center, 8.18 kpc or 26,700 ly distant,
-around 26,700 AD <span class="lab">(<span class="lab-fact">fact</span>-based calculation)</span>, and the Andromeda galaxy in
-about 2.5 million years.</p>
+around 26,700 AD, and the Andromeda galaxy in about 2.5 million
+years.</p>
 <p>The rule generalizes to any emission date: the shell radius in
 light-years equals the current year minus the event year. Humanity's own
 most famous outbound marker, the sunlight (and faint radio) of the 1969
 Apollo 11 landing, forms a shell now 57 ly out, enclosing on the order
-of 2,200 stars, and it reaches Aldebaran in 2034. A caution belongs here
-<span class="lab">(<span class="lab-fact">fact</span>, a standard SETI result)</span>: deliberate and leaked radio emissions
-are so weak that even our own best instruments could not detect Earth's
-radio leakage from more than a few light-years away. It is reflected
-sunlight, not broadcast, that carries the planet's record to
-interstellar distances.</p>
+of 2,200 stars, and it reaches Aldebaran in 2034. A caution belongs
+here: deliberate and leaked radio emissions are so weak that even our
+own best instruments could not detect Earth's radio leakage from more
+than a few light-years away. It is reflected sunlight, not broadcast,
+that carries the planet's record to interstellar distances.</p>
 <hr />
 <h2 id="3-propagation-effects-bending-lensing-and-path">3. Propagation
 Effects: Bending, Lensing, and Path</h2>
@@ -342,60 +346,59 @@ what happens to the light in transit. The headline result is that
 geometry is almost never the problem; photon budget is.</p>
 <h3 id="31-gravitational-deflection">3.1 Gravitational deflection</h3>
 <p>A ray grazing a mass M at impact parameter b is deflected by the
-general-relativistic angle alpha = 4GM / (c squared b) <span class="lab">(<span class="lab-fact">fact</span>)</span>. Two
-magnitudes anchor the intuition. Light grazing the Sun's limb bends by
-1.75 arcseconds, the classical eclipse measurement <span class="lab">(<span class="lab-fact">fact</span>)</span>. Light grazing
-an Earth-mass rocky planet bends by only about 0.0006 arcseconds <span class="lab">(<span class="lab-fact">fact</span>)</span>:
-real, but negligible. The bodies that matter as deflectors are therefore
-stars, compact remnants, black holes, and the aggregate mass of the
-galaxy, not planets.</p>
+general-relativistic angle alpha = 4GM / (c squared b). Two magnitudes
+anchor the intuition. Light grazing the Sun's limb bends by 1.75
+arcseconds, the classical eclipse measurement. Light grazing an
+Earth-mass rocky planet bends by only about 0.0006 arcseconds: real, but
+negligible. The bodies that matter as deflectors are therefore stars,
+compact remnants, black holes, and the aggregate mass of the galaxy, not
+planets.</p>
 <p>Because deflection falls as 1/b, it weakens rapidly with distance
 from any given mass. A Sun-like star bends a ray passing at 1 AU by
 about 8 milliarcseconds, but a ray passing at 1 ly by only about 1e-7
 arcseconds. A typical ray crossing 611 pc passes within about 15,000 AU
 of some star (from n pi b squared L = 1 with n = 0.1 per cubic parsec),
-where the deflection is around 5e-7 arcseconds <span class="lab">(<span class="lab-fact">fact</span>-based calculation)</span>.
-The typical photon, in other words, travels an effectively straight line
-across the entire 1,993 ly.</p>
+where the deflection is around 5e-7 arcseconds. The typical photon, in
+other words, travels an effectively straight line across the entire
+1,993 ly.</p>
 <h3 id="32-strong-lensing-rare-but-the-only-re-concentrator">3.2 Strong
 lensing: rare, but the only re-concentrator</h3>
 <p>Strong lensing, meaning a passage within a star's Einstein radius, is
 quantified by the optical depth tau = n pi (4GM / c squared) D squared /
 6. This yields odds of about 1 in 3e8 for solar-mass lenses along the
-full path, and about 1 in 7e8 for typical M dwarfs <span class="lab">(<span class="lab-fact">fact</span>-based
-calculation)</span>. Even the path's most extreme deflector is modest in
-absolute terms: a ray passing Gaia BH3 at 1 AU would bend only about
-0.27 arcseconds, and the cross-section for so close a pass is
-minuscule.</p>
+full path, and about 1 in 7e8 for typical M dwarfs. Even the path's most
+extreme deflector is modest in absolute terms: a ray passing Gaia BH3 at
+1 AU would bend only about 0.27 arcseconds, and the cross-section for so
+close a pass is minuscule.</p>
 <p>The distinction that matters for information is between bending and
 magnification. Deflection merely redirects a ray; strong lensing can
 distort or, crucially, magnify. Magnification is significant because a
 gravitational lens is the only known mechanism that re-concentrates
-diluted light rather than further spreading it <span class="lab">(<span class="lab-fact">fact</span>)</span>. The Solar
-Gravitational Lens concept, studied by Turyshev and colleagues under
-NASA, exploits exactly this: a telescope placed on the focal line beyond
-550 AU from a star receives amplification of order 1e10 to 1e11 and
-could, in principle, image an exoplanet at about 25 km resolution from
-roughly 100 ly (published and considered physically sound, though not
-demonstrated). We return to this loophole in Section 5.</p>
+diluted light rather than further spreading it. The Solar Gravitational
+Lens concept, studied by Turyshev and colleagues under NASA, exploits
+exactly this: a telescope placed on the focal line beyond 550 AU from a
+star receives amplification of order 1e10 to 1e11 and could, in
+principle, image an exoplanet at about 25 km resolution from roughly 100
+ly (published and considered physically sound, though not demonstrated).
+We return to this loophole in Section 5.</p>
 <h3 id="33-non-gravitational-path-effects">3.3 Non-gravitational path
 effects</h3>
 <p>Three further effects act on the light, and two of them are
 information rather than noise. At emission, Earth's atmosphere refracts
 horizon-grazing rays by up to about 0.5 degrees and imprints a Rayleigh
-blue tint, polarization, and specular ocean glint <span class="lab">(<span class="lab-fact">fact</span>)</span>; all of these
-encode real properties of the planet. The interstellar medium does not
+blue tint, polarization, and specular ocean glint; all of these encode
+real properties of the planet. The interstellar medium does not
 meaningfully bend optical light; it removes photons through extinction
 (treated in Section 5.3). Plasma dispersion, which smears broadband
 signals in a frequency-dependent way, is a radio-frequency concern and
-is negligible at optical wavelengths <span class="lab">(<span class="lab-fact">fact</span>)</span>.</p>
+is negligible at optical wavelengths.</p>
 <hr />
 <h2 id="4-the-resolution-ladder">4. The Resolution Ladder</h2>
 <p>Suppose photon budget were unlimited. What aperture or
 interferometric baseline would an observer at 1,993 ly need merely to
 resolve a given feature on Earth, ignoring for the moment whether enough
 light arrives? The diffraction limit theta = 1.22 lambda / D at lambda =
-550 nm gives a ladder of required scales <span class="lab">(<span class="lab-fact">fact</span>-based calculations)</span>:</p>
+550 nm gives a ladder of required scales:</p>
 <div class="tablewrap"><table>
 <thead>
 <tr>
@@ -438,49 +441,48 @@ to be collected.</p>
 <hr />
 <h2 id="5-signal-integrity-and-recoverability">5. Signal Integrity and
 Recoverability</h2>
-<p>We now impose the real photon budget. Standard inputs <span class="lab">(<span class="lab-fact">fact</span>s,
-standard values)</span>: solar constant 1,361 W/m squared; Earth radius 6,371
+<p>We now impose the real photon budget. Standard inputs (standard
+reference values): solar constant 1,361 W/m squared; Earth radius 6,371
 km; Bond albedo 0.30; solar luminosity 3.83e26 W; wavelength 550 nm.</p>
 <h3 id="51-inverse-square-dilution">5.1 Inverse-square dilution</h3>
 <p>Earth intercepts about 1.74e17 W of sunlight and reflects about
-5.2e16 W <span class="lab">(<span class="lab-fact">fact</span>-based calculation)</span>. Spread over a sphere of radius 1,993
-ly, this arrives as roughly 1.2e-23 W/m squared, equivalent to about 2.8
-reflected photons per square meter per day as an isotropic average
-<span class="lab">(<span class="lab-fact">fact</span>-based calculation)</span>. An observer viewing the full sunlit phase
-receives 8/3 of the average, about 7 photons per square meter per day. A
-10-meter telescope, then, collects on the order of 220 Earth photons per
-day. The light is not gone, but it is extraordinarily thin.</p>
+5.2e16 W. Spread over a sphere of radius 1,993 ly, this arrives as
+roughly 1.2e-23 W/m squared, equivalent to about 2.8 reflected photons
+per square meter per day as an isotropic average. An observer viewing
+the full sunlit phase receives 8/3 of the average, about 7 photons per
+square meter per day. A 10-meter telescope, then, collects on the order
+of 220 Earth photons per day. The light is not gone, but it is
+extraordinarily thin.</p>
 <h3 id="52-the-contrast-problem">5.2 The contrast problem</h3>
 <p>Even those photons arrive next to a far brighter neighbor. Earth's
 reflected output is about 1.4e-10 of the Sun's, the standard exo-Earth
-contrast figure <span class="lab">(<span class="lab-fact">fact</span>)</span>. At 1,993 ly the maximum Earth-Sun angular
-separation is about 1.6 milliarcseconds. Splitting the two at bare
-Rayleigh resolution requires an 85-meter diffraction-limited aperture; a
-realistic coronagraph with an inner working angle of 2 to 3 lambda/D
-pushes the requirement to 170 to 250 meters, on top of suppressing the
-starlight by a factor of 1e-10 <span class="lab">(<span class="lab-fact">fact</span>-based calculations)</span>. Observing in
-the thermal infrared eases the contrast to 1e6 to 1e7 but demands
-apertures 18 to 36 times larger <span class="lab">(<span class="lab-fact">fact</span>)</span>. Contrast is a severe constraint,
-but it is in principle surmountable; it is not the wall.</p>
+contrast figure. At 1,993 ly the maximum Earth-Sun angular separation is
+about 1.6 milliarcseconds. Splitting the two at bare Rayleigh resolution
+requires an 85-meter diffraction-limited aperture; a realistic
+coronagraph with an inner working angle of 2 to 3 lambda/D pushes the
+requirement to 170 to 250 meters, on top of suppressing the starlight by
+a factor of 1e-10. Observing in the thermal infrared eases the contrast
+to 1e6 to 1e7 but demands apertures 18 to 36 times larger. Contrast is a
+severe constraint, but it is in principle surmountable; it is not the
+wall.</p>
 <h3 id="53-extinction">5.3 Extinction</h3>
 <p>Interstellar dust removes photons en route. In the galactic plane,
-extinction runs 0.7 to 1 magnitude per kiloparsec <span class="lab">(<span class="lab-fact">fact</span>, strongly
-direction-dependent)</span>, which over 611 pc removes 33 to 43 percent of the
+extinction runs 0.7 to 1 magnitude per kiloparsec (strongly
+direction-dependent), which over 611 pc removes 33 to 43 percent of the
 photons; toward the galactic poles the loss is near zero. Removed
 photons are not annihilated but scattered out of the coherent image and
 re-radiated as diffuse glow and thermal infrared. Their imaging
 information is scrambled even though the photons themselves persist, and
 because blue scatters more than red, extinction also reddens what
-remains <span class="lab">(<span class="lab-fact">fact</span>)</span>. This distinction, scrambled versus destroyed, is central
-to Section 6.</p>
+remains. This distinction, scrambled versus destroyed, is central to
+Section 6.</p>
 <h3 id="54-spectral-shifts">5.4 Spectral shifts</h3>
 <p>Two shifts are worth checking and dismissing. The Doppler shift from
 Earth's motion is of order 1e-4, trivial in magnitude, and is in fact a
 feature: Earth's 30 km/s annual velocity wobble encodes the orbit in a
 periodic spectral modulation. Cosmological redshift at this distance is
 z of order 1.4e-7, and since the light never leaves the gravitationally
-bound Milky Way, even that is not truly accumulated: negligible
-<span class="lab">(<span class="lab-fact">fact</span>)</span>.</p>
+bound Milky Way, even that is not truly accumulated: negligible.</p>
 <h3 id="55-the-information-theoretic-result-three-tiers">5.5 The
 information-theoretic result: three tiers</h3>
 <p>Combining flux, contrast, extinction, and resolution, the
@@ -502,29 +504,28 @@ loophole of Section 3.2. An observer pre-positioned on a stellar
 gravitational-lens focal line aimed at Earth would receive amplification
 of 1e10 to 1e11 and could in principle assemble a coarse map. But
 extrapolating the published Solar Gravitational Lens performance from
-about 100 ly out to 2,000 ly is a roughly 20-times stretch <span class="lab">(<span class="lab-assumption">assumption</span>)</span>,
+about 100 ly out to 2,000 ly is a roughly 20-times stretch,<sup>*</sup>
 degrading the achievable resolution to a few hundred kilometers and
 requiring integrations of months to years. Earth's scene changes hourly,
 so the honest product is a time-averaged, cloud-blurred map of
 continents at best, not a snapshot.</p>
 <p><strong>Tier C, events and people: irretrievably lost, as
 physics.</strong> A single sunlit person reflects about 280 W, roughly
-8e20 photons per second <span class="lab">(<span class="lab-fact">fact</span>-based calculation)</span>. Diluted over the
-hemisphere at 1,993 ly, that is about 3e-14 photons per square meter per
-day. To catch even one photon per day from one person requires a
-collector about 5,800 km on a side, and that single photon arrives
-buried under about 8e18 solar photons per second, roughly 7e23 per day,
-striking the same collector. Even a 100-meter city district delivers
-only about 50 photons per hour to a 1 square kilometer collector, and
-only out to roughly 1 light-year. The governing principle is
-unforgiving: when fewer than one signal photon crosses any bounded
-aperture during an event, no instrument can recover that event, because
-you cannot beat shot noise with zero photons <span class="lab">(<span class="lab-fact">fact</span>; a hard quantum
-limit, not an engineering shortfall)</span>.</p>
+8e20 photons per second. Diluted over the hemisphere at 1,993 ly, that
+is about 3e-14 photons per square meter per day. To catch even one
+photon per day from one person requires a collector about 5,800 km on a
+side, and that single photon arrives buried under about 8e18 solar
+photons per second, roughly 7e23 per day, striking the same collector.
+Even a 100-meter city district delivers only about 50 photons per hour
+to a 1 square kilometer collector, and only out to roughly 1 light-year.
+The governing principle is unforgiving: when fewer than one signal
+photon crosses any bounded aperture during an event, no instrument can
+recover that event, because you cannot beat shot noise with zero photons
+(a hard quantum limit, not an engineering shortfall).</p>
 <h3 id="56-crossover-distances">5.6 Crossover distances</h3>
 <p>The tiers imply characteristic horizons beyond which each class of
 information falls below one photon per realistic aperture
-(order-of-magnitude, assumption-dependent): watchable events around 1
+(order-of-magnitude estimates)<sup>*</sup>: watchable events around 1
 ly; global light curves and weather from tens to a few hundred ly;
 spectra and life detection out to thousands of ly and beyond; and
 lens-assisted geography at essentially any distance, given a perfectly
@@ -539,11 +540,11 @@ possible observer at the 33 AD wavefront reconstruct events on Earth's
 surface in that year, a gathering in Jerusalem, a person's face, a
 single afternoon? No. The event-level photon count across any realistic
 aperture is less than one, and quantum shot noise makes a sub-photon
-signal unrecoverable in principle <span class="lab">(<span class="lab-fact">fact</span>-based conclusion)</span>. What survives
-at 1,993 ly is categorically thinner: that Earth existed, was wet, was
-alive, rotated in 24 hours, orbited in 365 days, and, through a
-gravitational lens with luck and precise positioning, a blurred
-cloud-averaged map of its continents.</p>
+signal unrecoverable in principle. What survives at 1,993 ly is
+categorically thinner: that Earth existed, was wet, was alive, rotated
+in 24 hours, orbited in 365 days, and, through a gravitational lens with
+luck and precise positioning, a blurred cloud-averaged map of its
+continents.</p>
 <p>It is essential to separate two claims that are easily conflated.</p>
 <p><strong>Diluted: yes, catastrophically.</strong> By every measure in
 Section 5, the record is spread so thin that most of it cannot be
@@ -551,18 +552,18 @@ reassembled by any bounded instrument. This is a statement about
 retrievability, and it is decisive.</p>
 <p><strong>Destroyed: mainstream physics says no.</strong> Quantum
 evolution is unitary; information is not erased but disperses into ever
-finer correlations among photons, dust grains, and re-emitted heat
-<span class="lab">(<span class="lab-fact">fact</span>, with one caveat below)</span>. A photon absorbed by an interstellar dust
-grain is re-radiated as thermal infrared, its original imaging content
-scrambled into heat in a way that is thermodynamically irreversible in
-practice, like reconstructing a burned letter from its smoke. The
-content is scrambled, not annihilated. The deepest form of the question
-touches the black hole information paradox, where the field has moved
-strongly toward preservation following the Page-curve results of 2019 to
-2020, but that remains labeled <span class="lab">(<span class="lab-uncertain">uncertain</span>, active research)</span>. It barely
-bears on the present case in any event: only a few rays in a billion are
-even strongly lensed by a star along the path, let alone swallowed by a
-black hole.</p>
+finer correlations among photons, dust grains, and re-emitted heat (with
+one caveat below). A photon absorbed by an interstellar dust grain is
+re-radiated as thermal infrared, its original imaging content scrambled
+into heat in a way that is thermodynamically irreversible in practice,
+like reconstructing a burned letter from its smoke. The content is
+scrambled, not annihilated. The deepest form of the question touches the
+black hole information paradox, where the field has moved strongly
+toward preservation following the Page-curve results of 2019 to 2020,
+but that remains an open question in active research.<sup>*</sup> It
+barely bears on the present case in any event: only a few rays in a
+billion are even strongly lensed by a star along the path, let alone
+swallowed by a black hole.</p>
 <p>The upshot is a statement that is both humbling and precise. Roughly
 half of the shell, the hemisphere of it directed out of the galactic
 plane, will clear the Milky Way's dust within a few thousand more years
@@ -719,6 +720,9 @@ that cast it.</p>
 </tr>
 </tbody>
 </table></div>
+<p><em>* A stated assumption or a genuinely uncertain quantity; all
+other quantitative claims follow from the stated inputs or from standard
+reference values.</em></p>
 <hr />
 <h2 id="references">References</h2>
 <p>Cited sources and standard results underlying the figures above. Full
