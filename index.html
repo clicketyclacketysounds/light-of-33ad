@@ -31,6 +31,11 @@ body{font-family:var(--mono);color:var(--ink)}
   background:var(--bg-void);
   overflow:hidden;
 }
+/* On portrait / tall screens (phones held upright), fill the whole viewport
+   instead of a thin 16:9 letterbox band. 100dvh tracks the mobile URL bar. */
+@media (max-aspect-ratio:1/1){
+  #stage{ width:100vw; height:100vh; height:100dvh; }
+}
 canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 
 /* ---------- HUD ---------- */
@@ -166,6 +171,17 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
   #note{display:none}
   #caption{font-size:11px;bottom:88px}
 }
+
+/* portrait-only hint, CSS-only, fades itself out */
+#rotatehint{
+  position:absolute;left:50%;bottom:68px;transform:translateX(-50%);z-index:8;
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+  white-space:nowrap;pointer-events:none;display:none;opacity:0;
+}
+@media (max-aspect-ratio:1/1){
+  #rotatehint{display:block;animation:hintFade 6.5s ease forwards}
+}
+@keyframes hintFade{0%{opacity:0}14%{opacity:.85}72%{opacity:.85}100%{opacity:0}}
 </style>
 </head>
 <body>
@@ -215,6 +231,8 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
     </div>
     <button class="btn" id="geobtn" aria-pressed="false" title="Show the true day-side reflection lobe">True geometry</button>
   </div>
+
+  <div id="rotatehint">Rotate your phone for the full view</div>
 
   <div id="endcard" role="dialog" aria-label="Summary">
     <div class="eyebrow">Today &#183; 2026</div>
@@ -451,7 +469,7 @@ function resize(){
   DPR = Math.min(2, window.devicePixelRatio || 1);
   cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR);
   ctx.setTransform(DPR,0,0,DPR,0,0);
-  RING = R_FRAC * H; CX = W/2; CY = H/2 + H*0.012;
+  RING = R_FRAC * Math.min(W, H); CX = W/2; CY = H/2 + H*0.012;
 }
 window.addEventListener('resize', resize);
 resize();
