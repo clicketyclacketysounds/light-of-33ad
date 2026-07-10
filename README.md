@@ -9,3 +9,9 @@ or view the live version via GitHub Pages.
 
 Best viewed in landscape on a phone. Tap to play, drag the scrubber to explore,
 and use the True Geometry toggle to see the day-side reflection lobe.
+
+## Presentation
+
+[The-Light-of-33-AD.pptx](The-Light-of-33-AD.pptx) is a 9-slide deck that puts the
+key findings in plain language: where the light is now, which stars it has passed,
+why the image fades, and what an observer could still learn about Earth from it.
