@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Light of 33 AD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --bg-void:#030509;
+  --bg-halo:#0c1424;
+  --ring:#dff1ff;
+  --ink:#c9d6e8;
+  --ink-bright:#eaf2ff;
+  --dim:#5f6e86;
+  --dimmer:#3a4557;
+  --gold:#ffd27d;
+  --gold-deep:#e0a94a;
+  --uncertain:#9aa7ff;
+  --line:rgba(120,140,170,.16);
+  --line-soft:rgba(120,140,170,.09);
+  --mono:'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --serif:'Spectral', Georgia, 'Times New Roman', serif;
+  --measure:38rem;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg-void);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:19px;
+  line-height:1.72;
+  letter-spacing:.005em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+/* ---- cosmic backdrop ---- */
+#stars{position:fixed;inset:0;z-index:-2;display:block}
+#veil{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 78% -10%, rgba(30,52,92,.42), transparent 55%),
+    radial-gradient(90% 70% at 8% 8%, rgba(70,48,96,.20), transparent 50%),
+    radial-gradient(140% 120% at 50% 120%, rgba(3,5,9,.9), rgba(3,5,9,0) 60%);
+}
+.grain{
+  position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.035;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- layout ---- */
+.wrap{max-width:var(--measure);margin:0 auto;padding:0 24px}
+.wide{max-width:64rem;margin:0 auto;padding:0 24px}
+
+/* ---- hero ---- */
+header.hero{
+  position:relative;
+  min-height:96vh;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;
+  padding:6rem 24px 4rem;
+}
+.hero-shell{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-54%);
+  width:min(86vw,760px);aspect-ratio:1;z-index:-1;pointer-events:none;
+  opacity:.9;
+}
+.kicker{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  letter-spacing:.42em;text-transform:uppercase;color:var(--gold);
+  margin:0 0 2.2rem;
+}
+.kicker::before,.kicker::after{content:"";display:inline-block;width:26px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-deep));vertical-align:middle;margin:0 14px 3px}
+.kicker::after{background:linear-gradient(90deg,var(--gold-deep),transparent)}
+h1.title{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(3.2rem,11vw,7.4rem);
+  line-height:.94;letter-spacing:-.02em;
+  margin:0;color:var(--ink-bright);
+  text-shadow:0 0 60px rgba(120,160,220,.28);
+}
+h1.title em{font-style:italic;font-weight:400;color:var(--gold);text-shadow:0 0 50px rgba(255,210,125,.35)}
+.deck{
+  font-family:var(--serif);font-style:italic;font-weight:300;
+  font-size:clamp(1.15rem,3.4vw,1.62rem);
+  line-height:1.5;color:var(--ink);max-width:30rem;
+  margin:2.2rem auto 0;opacity:.92;
+}
+.byline{
+  margin-top:3.2rem;font-family:var(--mono);font-size:11px;
+  letter-spacing:.14em;color:var(--dim);line-height:2;
+}
+.byline b{color:var(--ink);font-weight:500}
+.scrollcue{
+  position:absolute;bottom:1.8rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.9rem;
+  cursor:pointer;text-decoration:none;
+  transition:opacity .6s ease;
+}
+.scrollcue .cue-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--gold);opacity:.9;
+}
+/* animated mouse-wheel */
+.cue-mouse{
+  width:24px;height:38px;border:1.5px solid rgba(255,210,125,.55);border-radius:12px;
+  position:relative;
+  box-shadow:0 0 20px rgba(255,210,125,.15);
+}
+.cue-mouse::before{
+  content:"";position:absolute;left:50%;top:7px;width:3px;height:7px;border-radius:2px;
+  background:var(--gold);transform:translateX(-50%);
+  animation:wheel 1.8s cubic-bezier(.3,.1,.2,1) infinite;
+}
+@keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}25%{opacity:1}70%{opacity:1;transform:translate(-50%,12px)}100%{opacity:0;transform:translate(-50%,12px)}}
+/* chevrons */
+.cue-chevrons{display:flex;flex-direction:column;align-items:center;margin-top:-.2rem}
+.cue-chevrons span{
+  display:block;width:11px;height:11px;
+  border-right:1.5px solid var(--gold);border-bottom:1.5px solid var(--gold);
+  transform:rotate(45deg);margin-top:-5px;opacity:0;
+  animation:chev 1.8s ease-in-out infinite;
+}
+.cue-chevrons span:nth-child(1){animation-delay:0s}
+.cue-chevrons span:nth-child(2){animation-delay:.18s}
+.cue-chevrons span:nth-child(3){animation-delay:.36s}
+@keyframes chev{0%{opacity:0;transform:rotate(45deg) translate(-3px,-3px)}50%{opacity:1}100%{opacity:0;transform:rotate(45deg) translate(3px,3px)}}
+.scrollcue:hover .cue-label{opacity:1;color:var(--ink-bright)}
+@media (prefers-reduced-motion:reduce){.cue-mouse::before,.cue-chevrons span{animation:none;opacity:.9}}
+
+/* ---- standfirst ---- */
+.standfirst{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(1.35rem,3.6vw,1.72rem);line-height:1.5;
+  color:var(--ink-bright);letter-spacing:-.005em;
+  margin:5rem auto 4rem;
+}
+.standfirst .drop{
+  float:left;font-weight:400;font-size:5.4rem;line-height:.72;
+  padding:.32rem .5rem 0 0;color:var(--gold);
+  font-style:italic;text-shadow:0 0 40px rgba(255,210,125,.3);
+}
+
+/* ---- body ---- */
+section.body p{margin:0 0 1.5rem}
+section.body{padding-bottom:2rem}
+.sec{margin:5.5rem auto 0}
+.sec-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.34em;color:var(--gold-deep);
+  text-transform:uppercase;display:block;margin-bottom:.9rem;
+}
+h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2rem,5.5vw,2.9rem);
+  line-height:1.05;letter-spacing:-.02em;color:var(--ink-bright);margin:0 0 1.8rem;
+}
+h3{
+  font-family:var(--serif);font-style:italic;font-weight:500;
+  font-size:1.35rem;color:var(--ink-bright);margin:2.6rem 0 1rem;
+}
+.lead-in{font-family:var(--mono);font-size:.62em;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding-right:.4em}
+a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-deep)}
+
+/* claim tags */
+.tag{font-family:var(--mono);font-size:.62em;font-weight:500;letter-spacing:.08em;
+  text-transform:uppercase;padding:.12em .5em;border-radius:2px;vertical-align:.12em;white-space:nowrap}
+.tag.fact{color:#a9e6c9;background:rgba(80,200,150,.1);border:1px solid rgba(80,200,150,.28)}
+.tag.assume{color:var(--gold);background:rgba(255,210,125,.09);border:1px solid rgba(255,210,125,.26)}
+.tag.uncertain{color:var(--uncertain);background:rgba(154,167,255,.1);border:1px solid rgba(154,167,255,.3)}
+.num{font-family:var(--mono);font-size:.9em;color:var(--ink-bright);letter-spacing:-.01em}
+
+/* pull quote */
+.pull{
+  margin:3.5rem auto;max-width:42rem;text-align:center;
+  font-family:var(--serif);font-style:italic;font-weight:300;
+  font-size:clamp(1.6rem,4.6vw,2.35rem);line-height:1.32;color:var(--ink-bright);
+  position:relative;
+}
+.pull::before{content:"";display:block;width:40px;height:1px;margin:0 auto 1.8rem;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.pull::after{content:"";display:block;width:40px;height:1px;margin:1.8rem auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.pull b{color:var(--gold);font-weight:400;font-style:normal}
+
+/* figures */
+figure{margin:3.5rem 0;padding:0}
+.fig-frame{
+  background:linear-gradient(180deg,rgba(12,20,36,.55),rgba(6,10,18,.35));
+  border:1px solid var(--line);border-radius:6px;
+  padding:1.8rem 1.6rem 1.4rem;
+  box-shadow:0 24px 60px -30px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.03);
+}
+.fig-label{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--gold-deep);margin-bottom:1.2rem;display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.fig-label .fno{color:var(--dim)}
+figcaption{font-family:var(--serif);font-style:italic;font-size:.86rem;line-height:1.5;
+  color:var(--dim);margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line-soft)}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.axis{font-family:var(--mono);font-size:10px;fill:var(--dim);letter-spacing:.04em}
+.axis-t{font-family:var(--mono);font-size:9px;fill:var(--dimmer);letter-spacing:.1em;text-transform:uppercase}
+.datalabel{font-family:var(--mono);font-size:11px;fill:var(--ink-bright)}
+.gridline{stroke:var(--line-soft);stroke-width:1}
+
+/* data table */
+.tbl-scroll{overflow-x:auto;margin:3rem 0;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:13.5px;min-width:520px}
+caption{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--gold-deep);text-align:left;padding-bottom:1rem}
+th{font-weight:500;text-align:left;color:var(--gold);font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;padding:.7rem .9rem;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:.62rem .9rem;border-bottom:1px solid var(--line-soft);color:var(--ink);vertical-align:top}
+tbody tr:hover{background:rgba(120,140,170,.05)}
+td.n{color:var(--ink-bright)}
+td .u{color:var(--uncertain);font-size:.86em}
+.mini-tag{font-size:9px;padding:.1em .4em;border-radius:2px}
+
+/* verdict block */
+.verdict{
+  margin:5rem auto;padding:2.6rem 2.2rem;
+  border:1px solid rgba(255,210,125,.28);border-radius:6px;
+  background:radial-gradient(120% 140% at 100% 0,rgba(255,210,125,.06),transparent 60%);
+  position:relative;
+}
+.verdict::before{content:"THE VERDICT";position:absolute;top:-9px;left:24px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--gold);
+  background:var(--bg-void);padding:0 12px}
+.verdict .v-row{display:flex;gap:1.4rem;padding:1rem 0;border-bottom:1px solid var(--line-soft);align-items:baseline}
+.verdict .v-row:last-child{border-bottom:0;padding-bottom:0}
+.verdict .v-k{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);flex:0 0 8.5rem}
+.verdict .v-v{font-family:var(--serif);font-size:1.05rem;line-height:1.55;color:var(--ink)}
+
+/* footer */
+footer{
+  margin-top:7rem;padding:4rem 24px 5rem;border-top:1px solid var(--line);
+  text-align:center;
+}
+.footer-mark{font-family:var(--serif);font-style:italic;font-size:1.5rem;color:var(--gold);margin-bottom:1.4rem}
+footer .credits{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim);line-height:2.1}
+footer .credits b{color:var(--ink)}
+.refs{max-width:var(--measure);margin:3.5rem auto 0;text-align:left}
+.refs h4{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-deep);margin:0 0 1.2rem}
+.refs ol{margin:0;padding-left:1.4rem;font-size:.82rem;line-height:1.6;color:var(--dim);font-family:var(--serif)}
+.refs li{margin-bottom:.7rem}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity 1s cubic-bezier(.2,.6,.2,1),transform 1s cubic-bezier(.2,.6,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.scrollcue{animation:none}}
+
+@media(max-width:640px){
+  body{font-size:17.5px}
+  :root{--measure:100%}
+  .wrap{padding:0 20px}
+  .standfirst .drop{font-size:4.2rem}
+}
+
+/* ---- reading progress ---- */
+#progress{
+  position:fixed;top:0;left:0;height:2px;width:0%;z-index:120;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold));
+  box-shadow:0 0 12px rgba(255,210,125,.6);
+  transition:width .1s linear;
+}
+
+/* ---- watch it move link ---- */
+.watch{
+  display:inline-flex;align-items:center;gap:.7em;margin-top:2.6rem;
+  font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);text-decoration:none;border:1px solid rgba(255,210,125,.3);
+  border-radius:999px;padding:.7em 1.3em;
+  background:rgba(255,210,125,.04);
+  transition:background .25s,border-color .25s,transform .25s;
+}
+.watch:hover{background:rgba(255,210,125,.1);border-color:var(--gold);transform:translateY(-2px)}
+.watch .play{width:0;height:0;border-style:solid;border-width:5px 0 5px 8px;
+  border-color:transparent transparent transparent var(--gold);display:inline-block}
+.watch .play-ring{position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border:1px solid rgba(255,210,125,.5);border-radius:50%}
+
+/* ---- print / PDF ---- */
+@media print{
+  @page{margin:18mm 16mm}
+  :root{--measure:100%}
+  html,body{background:#fff !important;color:#12151b !important;font-size:11pt;line-height:1.5}
+  #stars,#veil,.grain,#progress,.scrollcue,.watch{display:none !important}
+  .wrap,.wide{max-width:100%;padding:0}
+  .reveal{opacity:1 !important;transform:none !important}
+  header.hero{min-height:auto;padding:0 0 12mm;page-break-after:avoid}
+  h1.title{color:#12151b !important;text-shadow:none;font-size:34pt}
+  h1.title em{color:#9a6a12 !important;text-shadow:none}
+  .kicker{color:#9a6a12 !important}
+  .kicker::before,.kicker::after{background:#c9a24a !important}
+  .deck,.byline,.byline b{color:#3a4150 !important}
+  .hero-shell{display:none !important}
+  h2,h3,.standfirst,.standfirst .drop,.datalabel,td.n,.num,.pull b{color:#12151b !important;text-shadow:none}
+  .standfirst .drop{color:#9a6a12 !important;text-shadow:none}
+  .sec-num,.lead-in,h3,.fig-label,caption,th,.refs h4,.watch{color:#9a6a12 !important}
+  p,.verdict .v-v,.refs ol,td{color:#2b313c !important}
+  .pull{color:#12151b !important;page-break-inside:avoid}
+  figure,.verdict,.tbl-scroll,.sec{page-break-inside:avoid}
+  h2,h3{page-break-after:avoid}
+  .fig-frame{background:#f4f6fa !important;border:1px solid #d4dae4 !important;box-shadow:none !important}
+  .verdict{background:#faf4e6 !important;border:1px solid #d8c48a !important}
+  .verdict::before{background:#fff !important;color:#9a6a12 !important}
+  .verdict .v-k,.footer-mark{color:#9a6a12 !important}
+  svg text{fill:#2b313c !important}
+  .axis-t,.axis{fill:#6a7280 !important}
+  .gridline{stroke:#dfe4ec !important}
+  footer{border-top:1px solid #d4dae4 !important}
+  footer .credits,footer .credits b{color:#3a4150 !important}
+  a{color:#9a6a12 !important}
+  .tag{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<canvas id="stars"></canvas>
+<div id="veil"></div>
+<div class="grain"></div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <svg class="hero-shell" viewBox="0 0 400 400" aria-hidden="true">
+    <defs>
+      <radialGradient id="shellGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffd27d" stop-opacity="0"/>
+        <stop offset="72%" stop-color="#dff1ff" stop-opacity="0"/>
+        <stop offset="86%" stop-color="#dff1ff" stop-opacity=".5"/>
+        <stop offset="90%" stop-color="#eaf2ff" stop-opacity=".9"/>
+        <stop offset="94%" stop-color="#dff1ff" stop-opacity=".28"/>
+        <stop offset="100%" stop-color="#dff1ff" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <g class="pulse-g">
+      <circle cx="200" cy="200" r="46" fill="none" stroke="rgba(255,210,125,.5)" stroke-width=".6"/>
+      <circle cx="200" cy="200" r="92" fill="none" stroke="rgba(223,241,255,.22)" stroke-width=".6"/>
+      <circle cx="200" cy="200" r="140" fill="none" stroke="rgba(223,241,255,.16)" stroke-width=".6"/>
+      <circle cx="200" cy="200" r="190" fill="url(#shellGrad)"/>
+      <circle cx="200" cy="200" r="4.5" fill="#ffd27d"/>
+      <circle cx="200" cy="200" r="4.5" fill="#ffd27d" opacity=".4">
+        <animate attributeName="r" values="4.5;13;4.5" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".5;0;.5" dur="4s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </svg>
+
+  <p class="kicker">Physics &nbsp;·&nbsp; Information Theory</p>
+  <h1 class="title">The Light<br>of <em>33&nbsp;AD</em></h1>
+  <p class="deck">Sunlight that glanced off Earth two thousand years ago is still traveling. Where is it now, and what does it still remember?</p>
+  <p class="byline">
+    Thought experiment conceived by <b>Paul&nbsp;J.&nbsp;Clark</b><br>
+    Researched and compiled by <b>Claude Fable&nbsp;5</b><br>
+    July&nbsp;7,&nbsp;2026
+  </p>
+  <a class="watch" href="../animation/where-is-the-light-of-33-ad.html">
+    <span class="play-ring"><span class="play"></span></span>
+    Watch the shell expand
+  </a>
+  <a class="scrollcue" href="#read" aria-label="Scroll down to begin reading">
+    <span class="cue-label">Begin Reading</span>
+    <span class="cue-mouse"></span>
+    <span class="cue-chevrons"><span></span><span></span><span></span></span>
+  </a>
+</header>
+
+<!-- ============ STANDFIRST ============ -->
+<div class="wrap" id="read">
+  <p class="standfirst reveal">
+    <span class="drop">E</span>arth is not a light source. It is a mirror. It catches a sliver of the Sun's output and throws roughly a third of it back into space, in every direction, carrying in that reflected glow a record of the surface, the weather, and the geometry that made it. Every year of that record is still out there, expanding, a set of nested shells racing outward at the speed of light. This is the story of one of them: the light of the year 33&nbsp;AD.
+  </p>
+</div>
+
+<section class="body">
+<div class="wrap">
+
+  <!-- SEC 1 -->
+  <div class="sec reveal">
+    <span class="sec-num">I &nbsp;·&nbsp;The Shell Today</span>
+    <h2>A bubble 1,993 light-years wide</h2>
+    <p><span class="lead-in">The arithmetic is simple.</span> Light travels one light-year per year <span class="tag fact">fact</span>. From 33&nbsp;AD to 2026 is <span class="num">1,993 years</span>, so the wavefront of that year's reflected light now sits <span class="num">1,993 light-years</span> away, about <span class="num">611 parsecs</span> <span class="tag fact">fact</span>. Because the reflection happened across a whole year rather than in an instant, the shell is not a surface but an annulus a full light-year thick: its inner edge carries light from late in the year, its outer edge light from early in it.</p>
+    <p>It is not a smooth, uniform sphere either. Only the daylit hemisphere reflects, so the emission is a lobe filling half the sky, sweeping around the ecliptic once a year as Earth orbits <span class="tag fact">fact</span>. On top of that annual sweep runs a daily flicker: as the planet turns, shifting arrangements of continent, ocean, and cloud change the reflected brightness by <span class="num">20 to 30 percent</span> over 24 hours, a modulation the NASA EPOXI mission measured directly for the whole disk of Earth <span class="tag fact">fact</span>. The shell, in other words, is not featureless. Woven into it are the planet's phase, its rotation period, and its weather.</p>
+  </div>
+
+  <p class="pull reveal">The rule holds for any year: the shell's radius in light-years is simply <b>the current year minus the year it left</b>.</p>
+
+  <div class="sec reveal">
+    <p>Because the wavefront has been expanding for two millennia, it has already washed over a great many stars. The 33&nbsp;AD light reached Alpha&nbsp;Centauri in 37&nbsp;AD, Vega by 58, the Pleiades in 477, the Orion Nebula in 1377. It swept past Gaia&nbsp;BH3, the nearest known dormant black hole, only around 1959. Today the front is somewhere in the Cygnus region, roughly 1,800 to 2,000 light-years out, and no catalogued object can be pinned exactly to it, because stellar distances this far carry errors of 5 to 10 percent, a spread of a hundred light-years or more <span class="tag fact">fact</span>.</p>
+  </div>
+
+  </div><!-- /wrap -->
+
+  <!-- FIG 1: milestone timeline (wide) -->
+  <div class="wide reveal">
+  <figure>
+    <div class="fig-frame">
+      <div class="fig-label"><span>The wavefront's journey outward</span><span class="fno">Fig. 1</span></div>
+      <svg viewBox="0 0 900 240" role="img" aria-label="Timeline of objects the 33 AD light has passed">
+        <!-- baseline -->
+        <line x1="40" y1="150" x2="860" y2="150" stroke="rgba(120,140,170,.25)" stroke-width="1"/>
+        <!-- gradient wavefront glow along the line -->
+        <defs>
+          <linearGradient id="frontLine" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ffd27d" stop-opacity=".1"/>
+            <stop offset="1" stop-color="#dff1ff" stop-opacity=".7"/>
+          </linearGradient>
+        </defs>
+        <line x1="40" y1="150" x2="860" y2="150" stroke="url(#frontLine)" stroke-width="2"/>
+        <!-- ticks: log-ish placement by distance -->
+        <!-- data: [x, name, dist, year, kind] -->
+        <g class="milestones"></g>
+      </svg>
+    </div>
+    <figcaption>Objects the 33&nbsp;AD light has already reached, placed by distance on a compressed scale. Gold marks the destinations; blue-white marks the present wavefront near 1,993&nbsp;ly. Polaris and Betelgeuse are shown with uncertainty because their catalogued distances genuinely disagree.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+  <!-- SEC 2 -->
+  <div class="sec reveal">
+    <span class="sec-num">II &nbsp;·&nbsp;What Happens on the Way</span>
+    <h2>The light travels almost perfectly straight</h2>
+    <p><span class="lead-in">One might expect</span> gravity to badly scramble the record over 1,993 light-years. It does not. A ray grazing an Earth-mass planet bends by about <span class="num">0.0006 arcseconds</span> <span class="tag fact">fact</span>: real, but negligible. Even a Sun-like star bends light passing a light-year away by only about <span class="num">10⁻⁷ arcseconds</span>. A typical ray crossing the whole 611 parsecs passes no closer than roughly 15,000 astronomical units to any star and is deflected by a few ten-millionths of an arcsecond <span class="tag fact">fact</span>. The typical photon travels an effectively straight line.</p>
+    <p>Strong gravitational lensing, a pass within a star's Einstein radius, is vanishingly rare along the path: odds of about <span class="num">1 in 3×10⁸</span> for Sun-mass lenses and <span class="num">1 in 7×10⁸</span> for typical red dwarfs <span class="tag fact">fact</span>. Yet lensing matters out of all proportion to its rarity, because it is the <em>only</em> known mechanism that re-concentrates diluted light rather than spreading it further <span class="tag fact">fact</span>. A telescope placed on a star's focal line, more than 550&nbsp;AU out, can harvest an amplification of <span class="num">10¹⁰ to 10¹¹</span>. Hold that thought; it becomes the one loophole in the verdict.</p>
+    <p>What the interstellar medium does instead is subtract. Dust removes photons, and over 611 parsecs in the galactic plane it strips away <span class="num">33 to 43 percent</span> of them, near zero toward the galactic poles <span class="tag fact">fact</span>. A dust-scattered photon is not destroyed; it is bumped out of the coherent image and re-radiated as diffuse infrared glow. Its light survives; its picture does not.</p>
+  </div>
+
+  </div>
+
+  <!-- FIG 2: inverse square falloff -->
+  <div class="wide reveal">
+  <figure>
+    <div class="fig-frame">
+      <div class="fig-label"><span>Photon flux falls as the inverse square</span><span class="fno">Fig. 2</span></div>
+      <svg viewBox="0 0 900 380" role="img" aria-label="Inverse square decline of Earth photon flux with distance">
+        <g class="flux-chart"></g>
+      </svg>
+    </div>
+    <figcaption>Reflected-photon flux against distance, plotted on logarithmic axes. Earth reflects about <span style="font-family:var(--mono)">5.2×10¹⁶&nbsp;W</span>; spread over an expanding sphere, the flux thins as the inverse square of distance. Gold marks the 33&nbsp;AD shell at 1,993&nbsp;ly, where the average is about 2.8 photons per square meter per day.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+  <!-- SEC 3 -->
+  <div class="sec reveal">
+    <span class="sec-num">III &nbsp;·&nbsp;The Photon Budget</span>
+    <h2>Not gone, but exquisitely thin</h2>
+    <p><span class="lead-in">Here is the crux.</span> Earth intercepts about <span class="num">1.74×10¹⁷&nbsp;W</span> of sunlight and reflects roughly <span class="num">5.2×10¹⁶&nbsp;W</span> <span class="tag fact">fact</span>. Spread that over a sphere 1,993 light-years across and it arrives as about <span class="num">2.8 reflected photons per square meter per day</span> on average, or about 7 for an observer catching the full daylit face <span class="tag fact">fact</span>. A ten-meter telescope out there would gather on the order of 220 Earth-photons a day. The light is not gone. It is just spread almost unimaginably thin.</p>
+    <p>And it arrives beside a far brighter neighbor. Earth's reflected output is only <span class="num">1.4×10⁻¹⁰</span> of the Sun's <span class="tag fact">fact</span>, and at this distance the two are separated by at most <span class="num">1.6 milliarcseconds</span>. Prising them apart takes an 85-meter aperture at best, and a realistic coronagraph pushes that to 170 to 250 meters while suppressing the starlight ten billion-fold <span class="tag fact">fact</span>. Hard, but not the wall. The wall is the photons themselves.</p>
+
+    <h3>The three tiers of what survives</h3>
+    <p>Combine the flux, the contrast, the dust, and the diffraction limit, and the answer to "what could a distant observer recover?" sorts into three clean tiers.</p>
+  </div>
+  </div>
+
+  <!-- FIG 3: three tiers -->
+  <div class="wide reveal">
+  <figure>
+    <div class="fig-frame">
+      <div class="fig-label"><span>Three horizons of recoverable information</span><span class="fno">Fig. 3</span></div>
+      <svg viewBox="0 0 900 300" role="img" aria-label="Three tiers of information recoverability by distance">
+        <g class="tiers-chart"></g>
+      </svg>
+    </div>
+    <figcaption>Each class of information fades below one photon per realistic aperture at its own distance. Watchable events vanish near 1 light-year; global weather and light curves persist for hundreds; atmospheric spectra and the signature of life survive for thousands. The 33&nbsp;AD shell (gold) sits far past the first horizon, comfortably inside the last.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+  <div class="sec reveal">
+    <p><b style="color:var(--ink-bright);font-weight:500">Tier A: the planet itself. Recoverable in principle.</b> A collector one kilometer square gathers on the order of <span class="num">120,000</span> Earth-photons an hour: enough for spectroscopy and for tracking the whole-disk light curve. From that an advanced observer could read oxygen, ozone, and water in the atmosphere, catch the red edge of vegetation and the glint of open ocean, clock the 24-hour rotation, and watch the seasons turn. The defensible conclusion available in the 33&nbsp;AD light is remarkable: an inhabited, oceanic, photosynthetic world with a 24-hour day and a 365-day year.</p>
+    <p><b style="color:var(--ink-bright);font-weight:500">Tier B: geography. Marginal, and only through the loophole.</b> Direct imaging of continents is hopeless at this range. The single escape is the gravitational lens. An observer pre-positioned on a star's focal line, aimed at Earth, could in principle assemble a coarse map. But stretching the published lens performance from 100 to 2,000 light-years <span class="tag assume">assumption</span> degrades it to a few hundred kilometers of resolution over months or years of exposure, while Earth's scene changes hourly. The honest product is a time-averaged, cloud-blurred smear of continents.</p>
+    <p><b style="color:var(--ink-bright);font-weight:500">Tier C: events and people. Gone, as physics.</b> A single sunlit person reflects about <span class="num">280&nbsp;W</span>, some <span class="num">8×10²⁰ photons a second</span> <span class="tag fact">fact</span>. Diluted over the hemisphere at 1,993 light-years, that is about <span class="num">3×10⁻¹⁴ photons per square meter per day</span>. To catch a single photon per day from one person you would need a collector some <span class="num">5,800&nbsp;km</span> on a side, and that lone photon would arrive buried under roughly <span class="num">7×10²³</span> solar photons striking the same surface each day. When fewer than one signal photon crosses any aperture during an event, no instrument can recover it. You cannot beat shot noise with zero photons <span class="tag fact">fact</span>.</p>
+  </div>
+  </div>
+
+  <!-- FIG 4: resolution ladder -->
+  <div class="wide reveal">
+  <figure>
+    <div class="fig-frame">
+      <div class="fig-label"><span>The aperture you would need to see it</span><span class="fno">Fig. 4</span></div>
+      <svg viewBox="0 0 900 320" role="img" aria-label="Aperture required to resolve features on Earth at 1993 light-years">
+        <g class="ladder-chart"></g>
+      </svg>
+    </div>
+    <figcaption>To merely resolve a feature on Earth at 1,993&nbsp;ly (setting the photon budget aside), the required aperture or baseline climbs from a planet-sized 1,000&nbsp;km for the whole disk to 85 astronomical units for a single person. Baselines are not the fatal problem. Photons are.</figcaption>
+  </figure>
+  </div>
+
+  <p class="pull reveal">The past is not preserved in any form we could ever watch. Yet its faintest physical trace will <b>outlast the world that cast it</b>.</p>
+
+  <div class="wrap">
+  <!-- SEC 4 -->
+  <div class="sec reveal">
+    <span class="sec-num">IV &nbsp;·&nbsp;Diluted, Not Destroyed</span>
+    <h2>The verdict</h2>
+    <p><span class="lead-in">Could any physically possible observer</span> at the 33&nbsp;AD wavefront reconstruct a single afternoon in that year, a gathering, a face? No. The event-level photon count across any realistic aperture is less than one, and quantum shot noise makes a sub-photon signal unrecoverable in principle, not merely in practice.</p>
+    <p>But it is essential to separate two claims that are easy to blur together. <b style="color:var(--ink-bright)">Diluted?</b> Yes, catastrophically: the record is spread too thin for any bounded instrument to reassemble most of it. <b style="color:var(--ink-bright)">Destroyed?</b> Mainstream physics says no. Quantum evolution is unitary; information disperses into ever finer correlations rather than vanishing <span class="tag fact">fact</span>. A photon swallowed by a dust grain is re-radiated as heat, its picture scrambled the way a burned letter is scrambled into smoke: thermodynamically irreversible, but not annihilated. The deepest form of the question touches the black-hole information paradox, where the field has leaned hard toward preservation since the Page-curve results of 2019 to 2020 <span class="tag uncertain">uncertain, active research</span>, though that barely bears on light which is almost never strongly lensed, let alone swallowed.</p>
+  </div>
+
+  <div class="verdict reveal">
+    <div class="v-row"><div class="v-k">Survives</div><div class="v-v">That Earth existed, was wet, was alive, turned once in 24 hours, and circled its star in 365 days. Spectra, rotation, and the signature of life, readable in principle at the wavefront.</div></div>
+    <div class="v-row"><div class="v-k">Barely</div><div class="v-v">A blurred, cloud-averaged map of continents, and only for an observer perfectly placed on a gravitational lens.</div></div>
+    <div class="v-row"><div class="v-k">Lost</div><div class="v-v">Every event at human scale. Foreclosed by shot noise, a quantum limit, not an engineering shortfall.</div></div>
+    <div class="v-row"><div class="v-k">Never</div><div class="v-v">Destroyed. Under unitarity the information is diluted beyond retrieval, but it is not erased.</div></div>
+  </div>
+
+  <div class="sec reveal">
+    <p>Roughly half the shell, the half aimed up out of the galactic plane, will clear the Milky Way's dust within a few thousand more years and then coast through intergalactic space for cosmological timescales. In the most literal physical sense, a faint, diluted, unreadable record of Earth as it was in 33&nbsp;AD will still exist long after the Earth itself is gone.</p>
+  </div>
+  </div>
+
+  <!-- key quantities table -->
+  <div class="wide reveal">
+    <div class="tbl-scroll">
+      <table>
+        <caption>Key quantities</caption>
+        <thead><tr><th>Quantity</th><th>Value</th><th>Label</th></tr></thead>
+        <tbody>
+          <tr><td>Shell radius, 2026</td><td class="n">1,993 ly (611 pc)</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Shell thickness</td><td class="n">1 ly</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Reflected power</td><td class="n">5.2×10¹⁶ W</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Photon flux at wavefront</td><td class="n">2.8 /m²/day <span class="u">(~7 full-phase)</span></td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Earth-Sun contrast</td><td class="n">1.4×10⁻¹⁰</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Max Earth-Sun separation</td><td class="n">1.6 mas</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Aperture to split Earth/Sun</td><td class="n">85 m → 170 to 250 m</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Extinction loss over 611 pc</td><td class="n">33 to 43% (plane)</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Strong-lensing odds on path</td><td class="n">1 in 3×10⁸ to 7×10⁸</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Sunlit person reflected power</td><td class="n">~280 W (8×10²⁰ ph/s)</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Event-recovery horizon</td><td class="n">~1 ly</td><td><span class="tag assume mini-tag">assumption</span></td></tr>
+          <tr><td>Galactic-center arrival</td><td class="n">~26,700 AD</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+          <tr><td>Polaris distance</td><td class="n">~430 ly <span class="u">(320 to 450)</span></td><td><span class="tag uncertain mini-tag">uncertain</span></td></tr>
+          <tr><td>Betelgeuse distance</td><td class="n">~550 ly <span class="u">(400 to 650)</span></td><td><span class="tag uncertain mini-tag">uncertain</span></td></tr>
+          <tr><td>Deneb distance</td><td class="n">1,400 to 2,600+ ly</td><td><span class="tag uncertain mini-tag">uncertain</span></td></tr>
+          <tr><td>Apollo 11 shell radius, 2026</td><td class="n">57 ly</td><td><span class="tag fact mini-tag">fact</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  <div class="footer-mark">✦</div>
+  <div class="credits">
+    <b>The Light of 33 AD</b><br>
+    Thought experiment conceived by <b>Paul J. Clark</b><br>
+    Researched and compiled by <b>Claude Fable 5</b> &nbsp;·&nbsp; July 7, 2026
+  </div>
+
+  <div class="refs">
+    <h4>Sources &amp; standard results</h4>
+    <ol>
+      <li>Solar constant, solar luminosity, Earth radius, and Bond albedo: standard astrophysical reference values.</li>
+      <li>Earth's diurnal reflectance variation of 20 to 30 percent: NASA EPOXI / Deep Impact extended-mission whole-disk Earth observations.</li>
+      <li>Solar Gravitational Lens performance and focal-line concept: S. Turyshev et al., NASA Innovative Advanced Concepts studies.</li>
+      <li>Interstellar extinction of 0.7 to 1 magnitude per kiloparsec in the galactic plane: standard interstellar-medium references, direction-dependent.</li>
+      <li>Exo-Earth contrast of 1.4×10⁻¹⁰ and coronagraph inner-working-angle limits: exoplanet direct-imaging literature.</li>
+      <li>Gravitational deflection α = 4GM/c²b and the 1.75-arcsecond solar value: general relativity, confirmed by eclipse and radio measurement.</li>
+      <li>Black-hole information preservation and the Page curve: 2019 to 2020 results on the entanglement entropy of Hawking radiation (active research).</li>
+      <li>Detectability of Earth's radio leakage: standard SETI result that terrestrial leakage is undetectable beyond a few light-years with comparable instruments.</li>
+    </ol>
+  </div>
+</footer>
+
+<script>
+/* ---------- starfield ---------- */
+(function(){
+  var c=document.getElementById('stars'),x=c.getContext('2d'),stars=[],DPR=Math.min(2,window.devicePixelRatio||1);
+  function size(){c.width=innerWidth*DPR;c.height=innerHeight*DPR;x.setTransform(DPR,0,0,DPR,0,0);build();}
+  function build(){
+    stars=[];var n=Math.round(innerWidth*innerHeight/6500);
+    for(var i=0;i<n;i++){
+      stars.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+        r:Math.random()*1.2+.2,a:Math.random()*.6+.2,
+        tw:Math.random()*.02+.004,ph:Math.random()*6.28,
+        c:Math.random()>.9?'255,210,125':(Math.random()>.6?'223,241,255':'201,214,232')});
+    }
+  }
+  var t=0;
+  function draw(){
+    t+=1;x.clearRect(0,0,innerWidth,innerHeight);
+    for(var i=0;i<stars.length;i++){var s=stars[i];
+      var a=s.a*(.65+.35*Math.sin(t*s.tw+s.ph));
+      x.beginPath();x.arc(s.x,s.y,s.r,0,6.283);
+      x.fillStyle='rgba('+s.c+','+a.toFixed(3)+')';x.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  addEventListener('resize',size);size();draw();
+})();
+
+/* ---------- helpers ---------- */
+var NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function txt(t,attrs,parent){var e=el('text',attrs,parent);e.textContent=t;return e;}
+
+/* ---------- FIG 1: milestone timeline ---------- */
+(function(){
+  var g=document.querySelector('.milestones');if(!g)return;
+  var x0=40,x1=860,y=150;
+  // compressed sqrt scale from 0..2000 ly
+  function px(d){return x0+(x1-x0)*Math.sqrt(d/2000);}
+  var data=[
+    {d:4.4,n:'α Cen',yr:'37',k:'p'},
+    {d:25,n:'Vega',yr:'58',k:'p'},
+    {d:65,n:'Aldebaran',yr:'98',k:'p'},
+    {d:250,n:'Spica',yr:'283',k:'p'},
+    {d:430,n:'Polaris',yr:'~440',k:'u'},
+    {d:444,n:'Pleiades',yr:'477',k:'p'},
+    {d:550,n:'Betelgeuse',yr:'~C6',k:'u'},
+    {d:860,n:'Rigel',yr:'890',k:'p'},
+    {d:1344,n:'Orion Neb.',yr:'1377',k:'p'},
+    {d:1926,n:'Gaia BH3',yr:'1959',k:'p'},
+    {d:1993,n:'TODAY',yr:'2026',k:'now'}
+  ];
+  // scale ticks
+  [0,100,500,1000,2000].forEach(function(d){
+    var xx=px(d);
+    el('line',{x1:xx,y1:y-4,x2:xx,y2:y+4,stroke:'rgba(120,140,170,.4)','stroke-width':1},g);
+    txt(d+(d===2000?' ly':''),{x:xx,y:y+22,'text-anchor':'middle',class:'axis-t'},g);
+  });
+  data.forEach(function(m,i){
+    var xx=px(m.d), up=i%2===0, ty=up?y-14:y+14, ly=up?y-56:y+52, lyr=up?y-40:y+68;
+    var col=m.k==='now'?'#dff1ff':(m.k==='u'?'#9aa7ff':'#ffd27d');
+    el('line',{x1:xx,y1:y,x2:xx,y2:up?y-34:y+34,stroke:col,'stroke-width':m.k==='now'?1.4:.8,'stroke-opacity':.5},g);
+    if(m.k==='now'){
+      el('circle',{cx:xx,cy:y,r:6,fill:'none',stroke:col,'stroke-width':1.4},g);
+      el('circle',{cx:xx,cy:y,r:2.6,fill:col},g);
+    } else {
+      el('circle',{cx:xx,cy:y,r:m.k==='u'?3:3.4,fill:m.k==='u'?'none':col,stroke:col,'stroke-width':1.2},g);
+    }
+    var nm=txt(m.n,{x:xx,y:ly,'text-anchor':'middle',class:'datalabel',fill:col,'font-weight':m.k==='now'?600:400},g);
+    if(m.k==='now')nm.setAttribute('letter-spacing','.14em');
+    txt(m.yr+(m.k==='now'?'':' AD'),{x:xx,y:lyr,'text-anchor':'middle',class:'axis-t'},g);
+  });
+  txt('distance from Earth  ·  arrival year of the 33 AD light',{x:x0,y:225,class:'axis-t'},g);
+})();
+
+/* ---------- FIG 2: inverse-square flux (log-log) ---------- */
+(function(){
+  var g=document.querySelector('.flux-chart');if(!g)return;
+  var L=70,R=860,T=30,B=310,W=R-L,H=B-T;
+  // x: distance 0.01 .. 2000 ly (log10 -2 .. 3.3)  ; y: flux, log
+  var xmin=-2,xmax=Math.log10(2000);
+  // flux(d)=2.8*(1993/d)^2 photons/m2/day ; compute log10
+  function fx(d){return L+W*(Math.log10(d)-xmin)/(xmax-xmin);}
+  function flux(d){return 2.8*Math.pow(1993/d,2);}
+  var ymax=Math.log10(flux(0.01)), ymin=Math.log10(flux(2000));
+  function fy(f){return B-H*(Math.log10(f)-ymin)/(ymax-ymin);}
+  // gridlines x (decades)
+  [[-2,'0.01'],[-1,'0.1'],[0,'1'],[1,'10'],[2,'100'],[3,'1,000']].forEach(function(t){
+    var xx=L+W*(t[0]-xmin)/(xmax-xmin);
+    el('line',{x1:xx,y1:T,x2:xx,y2:B,class:'gridline'},g);
+    txt(t[1],{x:xx,y:B+20,'text-anchor':'middle',class:'axis'},g);
+  });
+  txt('distance  (light-years, log scale)',{x:(L+R)/2,y:B+40,'text-anchor':'middle',class:'axis-t'},g);
+  // y ticks
+  [ -6,-3,0,3,6,9 ].forEach(function(p){
+    if(p<ymin-.5||p>ymax+.5)return;
+    var yy=B-H*(p-ymin)/(ymax-ymin);
+    el('line',{x1:L,y1:yy,x2:R,y2:yy,class:'gridline'},g);
+    txt('10'+sup(p),{x:L-10,y:yy+3,'text-anchor':'end',class:'axis'},g);
+  });
+  txt('photons / m² / day',{x:L-46,y:T-12,class:'axis-t'},g);
+  // curve
+  var dpts=[];for(var lg=xmin;lg<=xmax+0.001;lg+=0.06){var d=Math.pow(10,lg);dpts.push([fx(d),fy(flux(d))]);}
+  var path='M'+dpts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' L');
+  // area under
+  el('path',{d:path+' L'+fx(2000)+','+B+' L'+fx(0.01)+','+B+' Z',fill:'rgba(223,241,255,.05)'},g);
+  el('path',{d:path,fill:'none',stroke:'#dff1ff','stroke-width':2,'stroke-opacity':.85},g);
+  // event horizon marker at 1 ly
+  var ex=fx(1);
+  el('line',{x1:ex,y1:T,x2:ex,y2:B,stroke:'#9aa7ff','stroke-width':1,'stroke-dasharray':'3 4','stroke-opacity':.7},g);
+  txt('event horizon ≈ 1 ly',{x:ex+6,y:T+14,class:'axis-t',fill:'#9aa7ff'},g);
+  // 33 AD marker at 1993
+  var gx=fx(1993),gy=fy(flux(1993));
+  el('circle',{cx:gx,cy:gy,r:6,fill:'#ffd27d'},g);
+  el('circle',{cx:gx,cy:gy,r:11,fill:'none',stroke:'#ffd27d','stroke-width':1,'stroke-opacity':.5},g);
+  txt('33 AD shell',{x:gx-8,y:gy-16,'text-anchor':'end',class:'datalabel',fill:'#ffd27d'},g);
+  txt('2.8 /m²/day',{x:gx-8,y:gy-2,'text-anchor':'end',class:'axis',fill:'#ffd27d'},g);
+  function sup(n){var m={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};return (''+n).split('').map(function(c){return m[c]||c;}).join('');}
+})();
+
+/* ---------- FIG 3: three tiers ---------- */
+(function(){
+  var g=document.querySelector('.tiers-chart');if(!g)return;
+  var L=60,R=860,W=R-L;
+  var xmin=Math.log10(0.3),xmax=Math.log10(50000);
+  function fx(d){return L+W*(Math.log10(d)-xmin)/(xmax-xmin);}
+  // axis
+  [[1,'1'],[10,'10'],[100,'100'],[1000,'1,000'],[10000,'10,000']].forEach(function(t){
+    var xx=fx(t[0]);
+    el('line',{x1:xx,y1:40,x2:xx,y2:250,class:'gridline'},g);
+    txt(t[1],{x:xx,y:272,'text-anchor':'middle',class:'axis'},g);
+  });
+  txt('distance from Earth  (light-years, log scale)',{x:(L+R)/2,y:294,'text-anchor':'middle',class:'axis-t'},g);
+  var tiers=[
+    {y:70,h:26,end:1,col:'154,167,255',lab:'EVENTS & PEOPLE',sub:'watchable events fade by ~1 ly'},
+    {y:120,h:26,end:400,col:'223,241,255',lab:'WEATHER & LIGHT CURVES',sub:'global signals persist to hundreds of ly'},
+    {y:170,h:26,end:40000,col:'255,210,125',lab:'SPECTRA & LIFE',sub:'biosignatures readable for thousands of ly'}
+  ];
+  tiers.forEach(function(t){
+    var x2=fx(t.end);
+    var grad='grad'+t.end;
+    var lg=el('linearGradient',{id:grad,x1:0,y1:0,x2:1,y2:0},g);
+    el('stop',{offset:0,'stop-color':'rgb('+t.col+')','stop-opacity':.55},lg);
+    el('stop',{offset:.75,'stop-color':'rgb('+t.col+')','stop-opacity':.28},lg);
+    el('stop',{offset:1,'stop-color':'rgb('+t.col+')','stop-opacity':0},lg);
+    el('rect',{x:L,y:t.y,width:x2-L,height:t.h,rx:3,fill:'url(#'+grad+')'},g);
+    el('rect',{x:L,y:t.y,width:x2-L,height:t.h,rx:3,fill:'none',stroke:'rgb('+t.col+')','stroke-opacity':.4,'stroke-width':1},g);
+    txt(t.lab,{x:L+10,y:t.y+17,class:'datalabel',fill:'rgb('+t.col+')','font-size':11,'letter-spacing':'.1em'},g);
+    txt(t.sub,{x:L+10,y:t.y-6,class:'axis-t'},g);
+  });
+  // 33 AD line
+  var gx=fx(1993);
+  el('line',{x1:gx,y1:52,x2:gx,y2:210,stroke:'#ffd27d','stroke-width':1.4,'stroke-dasharray':'2 3'},g);
+  el('circle',{cx:gx,cy:52,r:4,fill:'#ffd27d'},g);
+  txt('the 33 AD shell, 1,993 ly',{x:gx,y:44,'text-anchor':'middle',class:'datalabel',fill:'#ffd27d','font-size':11},g);
+})();
+
+/* ---------- FIG 4: resolution ladder ---------- */
+(function(){
+  var g=document.querySelector('.ladder-chart');if(!g)return;
+  var L=200,R=850,W=R-L,rowH=54,top=40;
+  // aperture needed in km (log)
+  var rows=[
+    {n:'Earth as a disk',v:1000,u:'1,000 km'},
+    {n:'Continental features',v:2500,u:'2,500 km'},
+    {n:'A 10-km city',v:1.27e6,u:'1.27 million km'},
+    {n:'A single person',v:1.27e10,u:'85 AU'}
+  ];
+  var vmin=Math.log10(500),vmax=Math.log10(2e10);
+  function bw(v){return W*(Math.log10(v)-vmin)/(vmax-vmin);}
+  rows.forEach(function(r,i){
+    var y=top+i*rowH, w=bw(r.v), grad='lg'+i;
+    var lg=el('linearGradient',{id:grad,x1:0,y1:0,x2:1,y2:0},g);
+    el('stop',{offset:0,'stop-color':'#e0a94a','stop-opacity':.85},lg);
+    el('stop',{offset:1,'stop-color':'#ffd27d','stop-opacity':.9},lg);
+    el('rect',{x:L,y:y,width:Math.max(w,2),height:22,rx:2,fill:'url(#'+grad+')'},g);
+    txt(r.n,{x:L-16,y:y+16,'text-anchor':'end',class:'datalabel',fill:'#c9d6e8'},g);
+    txt(r.u,{x:L+Math.max(w,2)+10,y:y+16,class:'axis',fill:'#eaf2ff'},g);
+  });
+  // scale note
+  txt('required aperture or baseline  (log scale)',{x:L,y:top+rows.length*rowH+18,class:'axis-t'},g);
+})();
+
+/* ---------- scroll reveal ---------- */
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach(function(n){io.observe(n);});
+})();
+
+/* ---------- reading progress ---------- */
+(function(){
+  var bar=document.getElementById('progress'),ticking=false;
+  function update(){
+    var h=document.documentElement,max=h.scrollHeight-h.clientHeight;
+    bar.style.width=(max>0?(h.scrollTop/max*100):0)+'%';
+    ticking=false;
+  }
+  addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(update);ticking=true;}},{passive:true});
+  addEventListener('resize',update);update();
+})();
+</script>
+</body>
+</html>
