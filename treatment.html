@@ -272,6 +272,19 @@ footer .credits b{color:var(--ink)}
   transition:width .1s linear;
 }
 
+/* ---- back to menu ---- */
+.menulink{
+  position:fixed;top:15px;left:18px;z-index:130;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);text-decoration:none;display:inline-flex;align-items:center;gap:7px;
+  padding:8px 13px;border:1px solid rgba(255,210,125,.28);border-radius:4px;
+  background:rgba(3,5,9,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  transition:border-color .2s ease, background .2s ease;
+}
+.menulink:hover{border-color:var(--gold);background:rgba(255,210,125,.08)}
+.menulink svg{width:13px;height:13px}
+@media (max-width:640px){ .menulink span{display:none} }
+
 /* ---- watch it move link ---- */
 .watch{
   display:inline-flex;align-items:center;gap:.7em;margin-top:2.6rem;
@@ -326,6 +339,10 @@ footer .credits b{color:var(--ink)}
 </head>
 <body>
 <div id="progress"></div>
+<a class="menulink" href="index.html" aria-label="Back to the menu">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+  <span>Menu</span>
+</a>
 <canvas id="stars"></canvas>
 <div id="veil"></div>
 <div class="grain"></div>
